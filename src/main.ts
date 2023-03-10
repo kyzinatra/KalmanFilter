@@ -1,23 +1,26 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import { setupCounter } from './counter'
+import Chart from "chart.js/auto";
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+const App = document.querySelector("#app") as HTMLCanvasElement;
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+export function Init() {
+  console.info("Initialize");
+
+  Chart.overrides.line.spanGaps = true;
+
+  if (!App) return;
+
+  const data: number[] = Array.from({ length: 150 }, () => Math.random() * 1000);
+  const data2: number[] = Array.from({ length: 150 }, (_, i) => data.slice(0, i).reduce((t, e) => t + +e, 0) / i);
+  new Chart(App, {
+    type: "line",
+    data: {
+      labels: Array.from({ length: data.length }, (a, i) => i),
+      datasets: [
+        // { label: "first", data },
+        { label: "middle", data: data2 },
+        { label: "line", data: Array.from({ length: 150 }).fill(500) },
+      ],
+    },
+  });
+}
+Init();
