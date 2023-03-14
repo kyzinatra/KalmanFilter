@@ -2,12 +2,33 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/src/style/index.css" />
     <script type="module" src="/src/main.ts" defer></script>
     <title>Kalman Filter</title>
   </head>
   <body>
     <div style="width: 1600px"><canvas id="app"></canvas></div>
+    <div id="create-ship">
+      <form id="create-ship-form">
+        <input type="number" required placeholder="x" />
+        <input type="number" required placeholder="y" />
+        <input type="number" required placeholder="z" />
+        <button type="submit">Create ship</button>
+      </form>
+      <div id="create-ship-info"></div>
+    </div>
+    <div id="create-beacon">
+      <form id="create-beacon-form">
+        <input type="number" required placeholder="x" />
+        <input type="number" required placeholder="y" />
+        <input type="number" required placeholder="z" />
+        <button type="submit">Create beacon</button>
+      </form>
+      <div id="create-beacon-info"></div>
+    </div>
+    <div id="signal-controls">
+      <button id="signal-send">Send signal manually</button>
+    </div>
   </body>
 </html>
