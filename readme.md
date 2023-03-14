@@ -1,4 +1,4 @@
-# Kalman Filter with TS and ChartJS
+# Kalman Filter
 
 This is a project that demonstrates the use of a Kalman filter for estimating the position of a ship navigating through three beacons. The data is visualized using TypeScript and ChartJS.
 
