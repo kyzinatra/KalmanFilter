@@ -8,27 +8,33 @@
     <title>Kalman Filter</title>
   </head>
   <body>
-    <div style="width: 1600px"><canvas id="app"></canvas></div>
-    <div id="create-ship">
-      <form id="create-ship-form">
-        <input type="number" required placeholder="x" />
-        <input type="number" required placeholder="y" />
-        <input type="number" required placeholder="z" />
-        <button type="submit">Create ship</button>
-      </form>
-      <div id="create-ship-info"></div>
-    </div>
-    <div id="create-beacon">
-      <form id="create-beacon-form">
-        <input type="number" required placeholder="x" />
-        <input type="number" required placeholder="y" />
-        <input type="number" required placeholder="z" />
-        <button type="submit">Create beacon</button>
-      </form>
-      <div id="create-beacon-info"></div>
+    <div style="height: 700px" id="app"></div>
+    <div class="forms">
+      <div id="create-ship">
+        <form id="create-ship-form">
+          <input type="number" required placeholder="x" class="inpt" />
+          <input type="number" required placeholder="y" class="inpt" />
+          <input type="number" required placeholder="z" class="inpt" />
+          <button type="submit" class="btn">Create ship</button>
+        </form>
+      </div>
+      <div id="create-beacon">
+        <form id="create-beacon-form">
+          <input type="number" required placeholder="x" class="inpt" />
+          <input type="number" required placeholder="y" class="inpt" />
+          <input type="number" required placeholder="z" class="inpt" />
+          <button type="submit" class="btn">Create beacon</button>
+        </form>
+      </div>
     </div>
     <div id="signal-controls">
-      <button id="signal-send">Send signal manually</button>
+      <button id="signal-send" class="btn">Send signal manually</button>
+      <button id="signal-start" class="btn">Start position detected</button>
+      <button id="signal-start" class="btn">Stop position detected</button>
+    </div>
+
+    <div class="graphs">
+      <div style="height: 500px; width: 100%" id="BuildingsGraph"></div>
     </div>
   </body>
 </html>
