@@ -1,4 +1,4 @@
-# Kalman Filter with TS and ChartJS
+# Kalman Filter
 
 This is a project that demonstrates the use of a Kalman filter for estimating the position of a ship navigating through three beacons. The data is visualized using TypeScript and ChartJS.
 
@@ -40,34 +40,34 @@ The visualization shows the estimated position of the ship over time, along with
 If you do not have the exact time for which the signal travels from the ship to the tower, but only the time of arrival of the signal at each of the three towers, you can use trilateration to determine the position of the ship. However, you will need an additional piece of information - the time difference between the signals arriving at each tower.
 
 1. Determine the time difference between the arrival of the signal at each pair of towers:
-   Let's say the signal arrives at Tower 1 at time `t1`, at Tower 2 at time `t2`, and at Tower 3 at time `t3`. We can then calculate the time differences between the arrival of the signal at each pair of towers as follows:
+   Let's say the signal arrives at Tower 1 at time t1, at Tower 2 at time t2, and at Tower 3 at time t3. We can then calculate the time differences between the arrival of the signal at each pair of towers as follows:
 
-Time difference between Tower 1 and Tower 2 = `t2 - t1`
-Time difference between Tower 1 and Tower 3 = `t3 - t1`
-Time difference between Tower 2 and Tower 3 = `t3 - t2`
+Time difference between Tower 1 and Tower 2 = t2 - t1
+Time difference between Tower 1 and Tower 3 = t3 - t1
+Time difference between Tower 2 and Tower 3 = t3 - t2
 
-1. Use the time differences to calculate the differences in distances between the ship and each pair of towers:
+1. Use the time differences to calculate the differences in distances between the aircraft and each pair of towers:
 
 Assuming the speed of the signal is constant (for example, the speed of light), we can calculate the differences in distances between the ship and each pair of towers as follows:
 
-Difference in distance between Tower 1 and Tower 2 = `(t2 - t1)` - speed of signal
-Difference in distance between Tower 1 and Tower 3 = `(t3 - t1)` - speed of signal
-Difference in distance between Tower 2 and Tower 3 = `(t3 - t2)` - speed of signal
+Difference in distance between Tower 1 and Tower 2 = (t2 - t1) _ speed of signal
+Difference in distance between Tower 1 and Tower 3 = (t3 - t1) _ speed of signal
+Difference in distance between Tower 2 and Tower 3 = (t3 - t2) \* speed of signal
 
-1. Use the differences in distances to create two hyperbolas, each representing the possible location of the ship:
+1. Use the differences in distances to create two hyperbolas, each representing the possible location of the aircraft:
 
 Using the differences in distances calculated in step 2, we can create two hyperbolas that represent the possible location of the ship. To do this, we first need to find the two foci of each hyperbola. The foci of each hyperbola represent the locations of the two towers that contributed to the difference in distance.
 
 For example, let's say the differences in distances we calculated in step 2 are:
 
-Difference in distance between Tower 1 and Tower 2 = `d1`
-Difference in distance between Tower 1 and Tower 3 = `d2`
-Difference in distance between Tower 2 and Tower 3 = `d3`
-To create the first hyperbola, we would draw a curve such that the difference between the distances from the ship to Tower 1 and Tower 2 is constant, and equal to d1. The foci of this hyperbola would be at the locations of Tower 1 and Tower 2.
+Difference in distance between Tower 1 and Tower 2 = d1
+Difference in distance between Tower 1 and Tower 3 = d2
+Difference in distance between Tower 2 and Tower 3 = d3
+To create the first hyperbola, we would draw a curve such that the difference between the distances from the aircraft to Tower 1 and Tower 2 is constant, and equal to d1. The foci of this hyperbola would be at the locations of Tower 1 and Tower 2.
 
-To create the second hyperbola, we would draw a curve such that the difference between the distances from the ship to Tower 1 and Tower 3 is constant, and equal to d2. The foci of this hyperbola would be at the locations of Tower 1 and Tower 3.
+To create the second hyperbola, we would draw a curve such that the difference between the distances from the aircraft to Tower 1 and Tower 3 is constant, and equal to d2. The foci of this hyperbola would be at the locations of Tower 1 and Tower 3.
 
-1. The intersection point of the two hyperbolas is the actual position of the ship:
+1. The intersection point of the two hyperbolas is the actual position of the aircraft:
 
 The intersection point of the two hyperbolas represents the possible location of the ship. This is because the ship could be at any point on either of the two hyperbolas, and the time difference measurements do not provide enough information to determine the exact location. However, the intersection point is the only point that satisfies both hyperbolas, so it represents the most likely location of the ship.
 
@@ -75,7 +75,7 @@ It is important to note that trilateration with time difference measurements can
 
 ### Example
 
-Assuming that the ship is located at point `(x, y, z)`, the equations for the hyperboloids representing the possible locations of the ship can be written as follows:
+Assuming that the aircraft is located at point (x,y,z), the equations for the hyperboloids representing the possible locations of the aircraft can be written as follows:
 
 Hyperboloid 1:
 `sqrt((x - x1)^2 + (y - y1)^2 + (z - z1)^2) - sqrt((x - x2)^2 + (y - y2)^2 + (z - z2)^2) = d1`
