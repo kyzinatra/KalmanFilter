@@ -18,9 +18,9 @@ export async function Init() {
   const CommandCenter = new Navigation();
   const MainGraph = await new Visualize(App).init();
   MainGraph.addTrace({
-    x: Array.from({ length: 1000 }, (a, i) => i),
-    y: Array.from({ length: 1000 }, (a, i) => i),
-    z: Array.from({ length: 1000 }, (a, i) => (Math.random() * i) / 10 + i),
+    x: Array.from({ length: 1000 }, (_, i) => i),
+    y: Array.from({ length: 1000 }, (_, i) => i),
+    z: Array.from({ length: 1000 }, (_, i) => (Math.random() * i) / 10 + i),
     mode: "lines+markers",
     marker: {
       color: "rgb(127, 0, 127)",
