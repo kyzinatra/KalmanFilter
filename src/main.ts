@@ -10,7 +10,7 @@ const beaconForm = document.getElementById("create-beacon-form") as HTMLFormElem
 const shipForm = document.getElementById("create-ship-form") as HTMLFormElement;
 const sendSignalBtn = document.getElementById("signal-send") as HTMLButtonElement;
 const signalStartBtn = document.getElementById("signal-start") as HTMLButtonElement;
-const signalStroptBtn = document.getElementById("signal-stop") as HTMLButtonElement;
+const signalStopBtn = document.getElementById("signal-stop") as HTMLButtonElement;
 
 const [beaconX, beaconY, beaconZ] = beaconForm.elements as any as HTMLInputElement[];
 const [shipX, shipY] = shipForm.elements as any as HTMLInputElement[];
@@ -40,7 +40,7 @@ export async function Init() {
     startDetection(CommandCenter, MainGraph, BuildingsGraph);
   });
 
-  signalStroptBtn.addEventListener("click", () => {
+  signalStopBtn.addEventListener("click", () => {
     stopDetection(CommandCenter);
   });
 

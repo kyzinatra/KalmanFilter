@@ -63,7 +63,7 @@ async function detection(_time: number, graph: Visualize, CommandCenter: Navigat
   );
   setTimeout(
     () => window.isDetected && requestAnimationFrame(t => detection(t, graph, CommandCenter, BuildingsGraph)),
-    300
+    1000
   );
 }
 

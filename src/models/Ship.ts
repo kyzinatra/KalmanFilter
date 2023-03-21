@@ -16,7 +16,7 @@ export class Ship {
     const now = performance.now() / 1000;
     this.pos = this.pos.add(this.velocity.mul(now - this.dt));
     this.velocity = this.velocity.add(
-      new Vec(((Math.random() - 0.5) * 100) | 0, ((Math.random() - 0.5) * 50) | 0, ((Math.random() - 0.55) * 50) | 0)
+      new Vec(((Math.random() - 0.5) * 100) | 0, ((Math.random() - 0.5) * 50) | 0, Math.random())
     );
     this.dt = now;
   }
