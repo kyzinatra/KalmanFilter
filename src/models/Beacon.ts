@@ -1,7 +1,7 @@
 import type { Vec } from "./utils/Vector";
 import { v4 as uuid } from "uuid";
 export class Beacon {
-  private _signals: number[] | null = null;
+  private _signals: number[] = [];
   id: string;
 
   constructor(private _pos: Vec) {
@@ -19,7 +19,7 @@ export class Beacon {
   }
 
   clear() {
-    this._signals = null;
+    this._signals = [];
   }
   get signals() {
     return this._signals;

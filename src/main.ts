@@ -1,39 +1,26 @@
 import { Navigation } from "./models/Navigation";
 import { Vec } from "./models/utils/Vector";
 import { Visualize } from "./models/utils/Visualize";
+import { startDetection, stopDetection } from "./utils/startDetection";
 
-const App = document.querySelector("#app") as HTMLElement;
 const BuildingsGraphEl = document.querySelector("#BuildingsGraph") as HTMLElement;
+const App = document.querySelector("#app") as HTMLElement;
 
 const beaconForm = document.getElementById("create-beacon-form") as HTMLFormElement;
 const shipForm = document.getElementById("create-ship-form") as HTMLFormElement;
 const sendSignalBtn = document.getElementById("signal-send") as HTMLButtonElement;
+const signalStartBtn = document.getElementById("signal-start") as HTMLButtonElement;
+const signalStroptBtn = document.getElementById("signal-stop") as HTMLButtonElement;
 
 const [beaconX, beaconY, beaconZ] = beaconForm.elements as any as HTMLInputElement[];
-const [shipX, shipY, shipZ] = shipForm.elements as any as HTMLInputElement[];
+const [shipX, shipY] = shipForm.elements as any as HTMLInputElement[];
 
 const BuildingsGraph = await new Visualize(BuildingsGraphEl).init();
 
 export async function Init() {
   const CommandCenter = new Navigation();
   const MainGraph = await new Visualize(App).init();
-  MainGraph.addTrace({
-    x: Array.from({ length: 1000 }, (_, i) => i),
-    y: Array.from({ length: 1000 }, (_, i) => i),
-    z: Array.from({ length: 1000 }, (_, i) => (Math.random() * i) / 10 + i),
-    mode: "lines+markers",
-    marker: {
-      color: "rgb(127, 0, 127)",
-      size: 5,
-      symbol: "circle",
-      line: {
-        color: "rgb(204, 0, 204)",
-        width: 2,
-      },
-      opacity: 0.8,
-    },
-    type: "scatter3d",
-  });
+
   beaconForm.addEventListener("submit", e => {
     e.preventDefault();
     beaconHandler(new Vec(+beaconX.value, +beaconY.value, +beaconZ.value), CommandCenter);
@@ -41,18 +28,38 @@ export async function Init() {
 
   shipForm.addEventListener("submit", e => {
     e.preventDefault();
-    shipHandler(new Vec(+shipX.value, +shipY.value, +shipZ.value), CommandCenter);
+    shipHandler(new Vec(+shipX.value, +shipY.value, 0), CommandCenter);
   });
 
   sendSignalBtn.addEventListener("click", () => {
     CommandCenter.initCheck();
     CommandCenter.findCord();
   });
+
+  signalStartBtn.addEventListener("click", () => {
+    startDetection(CommandCenter, MainGraph, BuildingsGraph);
+  });
+
+  signalStroptBtn.addEventListener("click", () => {
+    stopDetection(CommandCenter);
+  });
+
+  for (let i = 0; i < 5; i++) {
+    beaconHandler(
+      new Vec((Math.random() * 1_000_0000) | 0, (Math.random() * 1_000_0000) | 0, (Math.random() * 1_000_0000) | 0),
+      CommandCenter
+    );
+  }
+
+  const shipVec = new Vec((Math.random() * 1_000_000) | 0, (Math.random() * 1_000_000) | 0, Math.random() * 1_000_000);
+  shipHandler(shipVec, CommandCenter);
 }
 
 function beaconHandler(vector: Vec, CommandCenter: Navigation) {
+  beaconX.value = "";
+  beaconY.value = "";
+  beaconZ.value = "";
   if (!CommandCenter.beacons?.length) {
-    console.log("create");
     BuildingsGraph.addTrace({
       x: [vector.cords[0]],
       y: [vector.cords[1]],
@@ -98,6 +105,9 @@ function shipHandler(vector: Vec, CommandCenter: Navigation) {
     name: "Ship",
     marker: { size: 15, color: "#FF0000" },
   });
+
+  shipX.value = "";
+  shipY.value = "";
 }
 
 Init();

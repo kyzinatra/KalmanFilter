@@ -28,7 +28,6 @@ export class Visualize {
   moveTrace(config: Data, ...trace: number[]) {
     Plotly.deleteTraces(this._element, trace);
     Plotly.addTraces(this._element, config);
-    Plotly.redraw(this._element);
   }
   clear() {}
 }
