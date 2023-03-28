@@ -29,14 +29,12 @@ This will start the development server, and you can access the project by openin
 
 ## Codebase Information
 
-The `src/models` folder contains classes of physical models. So the navigation class is responsible for the joint work of the ship and beacons. It stores instances of all beacons and the ship. It also creates them and initializes the sending of signals to the beacons by the initCheck method. After the calculation of positions occurs in the findCord method. A closed solution is calculated and another solution is iteratively calculated, which relies on the closed solution once, and then uses its previous solutions. After the solution is returned to be displayed on the screen.
+The `src/models` folder contains classes of physical models. So the navigation class is responsible for the joint work of the ship and beacons. It stores instances of all beacons and the ship. It also creates them and initializes the sending of signals to the beacons by the initCheck method. After the calculation of positions occurs in the findCord method. The closed solution is calculated and another solution is iteratively calculated using the least squares method, which relies on the closed solution 1 time, and then uses its previous solutions. After the solution is returned to be displayed on the screen.
 
-All utility classes for rendering and calculations are located in `src/models/utils`. The main `CordsCalc` class computes the solutions discussed earlier. It also stores the implementation of the `matrix` and `vector`.
+All utility classes for rendering and calculations are located in `src/models/utils`. The main CordsCalc class computes the solutions discussed earlier. It also stores the implementation of the matrix and vector.
+Start tracking is in `src/utils/startDetection`. The detection function initializes the distribution of signals to beacons and then starts the calculation of coordinates and draws the result. It also runs the `Ship.move()` function to move the ship through space.
 
-Start tracking is in `src/utils/startDetection.ts`. The detection function initializes the distribution of signals to beacons and then starts the calculation of coordinates and draws the result. It also runs the `Ship.move()` function to move the ship through space.
-By default, 6 beacons and a ship are drawn. You can clear all graphs by clicking the clear button.
-
-All other files are needed for the UI and are not directly involved in the simulation.
+By default, 6 beacons and a ship are drawn. You can clear all graphs by clicking the clear button. All other files are needed for the UI and are not directly involved in the modeling. In the main upper part there are 3 graphs that represent the real position of the ship. Its calculation using a closed solution, that is, not an iterative solution, and the last one, for a solution using the least squares method. That is an iterative solution. Below is a graph of the initial location of the vessel and towers.
 
 ## How it Works
 
