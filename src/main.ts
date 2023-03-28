@@ -4,7 +4,6 @@ import { Visualize } from "./models/utils/Visualize";
 import { startDetection, stopDetection } from "./utils/startDetection";
 
 const BuildingsGraphEl = document.querySelector("#BuildingsGraph") as HTMLElement;
-const App = document.querySelector("#app") as HTMLElement;
 
 const beaconForm = document.getElementById("create-beacon-form") as HTMLFormElement;
 const shipForm = document.getElementById("create-ship-form") as HTMLFormElement;
@@ -19,7 +18,6 @@ const BuildingsGraph = await new Visualize(BuildingsGraphEl).init();
 
 export async function Init() {
   const CommandCenter = new Navigation();
-  const MainGraph = await new Visualize(App).init();
 
   beaconForm.addEventListener("submit", e => {
     e.preventDefault();
@@ -37,21 +35,22 @@ export async function Init() {
   });
 
   signalStartBtn.addEventListener("click", () => {
-    startDetection(CommandCenter, MainGraph, BuildingsGraph);
+    startDetection(CommandCenter);
   });
 
   signalStopBtn.addEventListener("click", () => {
     stopDetection(CommandCenter);
   });
 
+  // TODO: Delete for manually control from UI
   for (let i = 0; i < 5; i++) {
     beaconHandler(
-      new Vec((Math.random() * 1_000_0000) | 0, (Math.random() * 1_000_0000) | 0, (Math.random() * 1_000_0000) | 0),
+      new Vec((Math.random() * 1_000_00) | 0, (Math.random() * 1_000_00) | 0, (Math.random() * 1_000_00) | 0),
       CommandCenter
     );
   }
 
-  const shipVec = new Vec((Math.random() * 1_000_000) | 0, (Math.random() * 1_000_000) | 0, Math.random() * 1_000_000);
+  const shipVec = new Vec(Math.random(), Math.random(), Math.random());
   shipHandler(shipVec, CommandCenter);
 }
 

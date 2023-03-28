@@ -10,7 +10,12 @@ function TtoR(t: number) {
 export class CordsCalc {
   constructor() {}
 
-  /** Get closed solution (n^3) */
+  /**
+   *  @description The algorithm presented here was initially published 1985 by Stephen Bancroft
+   *  as an attempt to solve the system equations for the GPS in a closed form.
+   *  The algorithm is algebraic and non iterative in nature, computationally efficient and numerically stable
+   * @link https://gssc.esa.int/navipedia/index.php/Bancroft_Method
+   * */
   getClosedSolution(mes: Beacon[]) {
     if (mes.length !== 4) {
       if (mes.length < 4) throw new Error("You must create at least four beacons");
@@ -49,7 +54,44 @@ export class CordsCalc {
 
     return [[d.mul(lambda1).add(e), d.mul(lambda2).add(e)]];
   }
-  getIterativeSolution() {}
+  /**
+   * @description
+   * We use just one possibility to solve overdetermined systems
+   * of linear equations and is also known under the terminology “Least Squares Adjustment by Parameters”
+   * @link https://disk.yandex.ru/i/Is6SlmPXKQ4zMw
+   * @link https://disk.yandex.ru/i/bmoRsVfMkdn0yA
+   * */
+  getIterativeSolutionByMLS(measurements: Beacon[], approx: Vec) {
+    function dmCalc(approxPos: number[], beaconPos: number[]) {
+      return (
+        Math.sqrt(
+          (beaconPos[0] - approxPos[0]) ** 2 + (beaconPos[1] - approxPos[1]) ** 2 + (beaconPos[2] - approxPos[2]) ** 2
+        ) + approxPos[3]
+      );
+    }
+
+    const A = new Matrix(measurements.length, 4);
+
+    A.fill((i, j) => {
+      const m_i = measurements[i].pos;
+      const x_a = approx.cords;
+      const d_i = Math.sqrt((m_i[0] - x_a[0]) ** 2 + (m_i[1] - x_a[1]) ** 2 + (m_i[2] - x_a[2]) ** 2);
+      if (j === 3) return 1;
+      return (x_a[j] - m_i[j]) / d_i;
+    });
+
+    //? subtract the real measurements by the measurements derived from the approximate solution m(x_a)
+    const dm = new Vec(
+      ...Array.from(
+        { length: measurements.length },
+        (_el, i) => TtoR(measurements[i].signals[0]) - dmCalc(approx.cords, measurements[i].pos)
+      )
+    );
+
+    const AdjustmentSolution = approx.add(A.transpose().mtxMul(A).inv().mtxMul(A.transpose()).vecMul(dm));
+
+    return AdjustmentSolution;
+  }
 
   filterResult(from: Vec[][]): Vec {
     const pattern = from[0];

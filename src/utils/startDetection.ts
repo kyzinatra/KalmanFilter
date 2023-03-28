@@ -1,4 +1,5 @@
 import type { Navigation } from "../models/Navigation";
+import type { Vec } from "../models/utils/Vector";
 import { Visualize } from "../models/utils/Visualize";
 
 declare global {
@@ -6,17 +7,11 @@ declare global {
     isDetected: boolean;
   }
 }
-
-export async function startDetection(CommandCenter: Navigation, MainGraph: Visualize, BuildingsGraph: Visualize) {
-  if (window.isDetected) return;
-  window.isDetected = true;
-  CommandCenter.ship?.start();
-  await CommandCenter.initCheck();
-  const result = CommandCenter.findCord();
-  MainGraph.addTrace({
-    x: [result?.cords[0] || 0],
-    y: [result?.cords[1] || 0],
-    z: [result?.cords[2] || 0],
+function getSettings(vec: Vec) {
+  return {
+    x: [vec.cords[0] || 0],
+    y: [vec.cords[1] || 0],
+    z: [vec.cords[2] || 0],
     mode: "lines+markers",
     marker: {
       color: "rgb(127, 0, 127)",
@@ -29,42 +24,47 @@ export async function startDetection(CommandCenter: Navigation, MainGraph: Visua
       opacity: 0.8,
     },
     type: "scatter3d",
-  });
-  CommandCenter.ship?.move();
-  detection(0, MainGraph, CommandCenter, BuildingsGraph);
+  } as any;
 }
 
-async function detection(_time: number, graph: Visualize, CommandCenter: Navigation, BuildingsGraph: Visualize) {
-  console.log("detected");
+const ClosedEl = document.querySelector("#closed") as HTMLElement;
+const IterationEl = document.querySelector("#MLS") as HTMLElement;
+
+const MainGraph = await new Visualize(ClosedEl, { title: "Closed solution" }).init();
+const IterationGraph = await new Visualize(IterationEl, { title: "MLS solution" }).init();
+
+export async function startDetection(CommandCenter: Navigation) {
+  if (window.isDetected) return;
+  window.isDetected = true;
+  CommandCenter.ship?.start();
   await CommandCenter.initCheck();
-  const result = CommandCenter.findCord();
-  if (result) {
-    graph.extendTrace(
-      {
-        x: [[result.cords[0]]],
-        y: [[result.cords[1]]],
-        z: [[result.cords[2]]],
-      },
-      0
-    );
-  }
+
+  const [closed, MLS] = CommandCenter.findCord();
+
+  MainGraph.addTrace(getSettings(closed));
+  IterationGraph.addTrace(getSettings(MLS));
+
   CommandCenter.ship?.move();
-  BuildingsGraph.moveTrace(
-    {
-      x: [CommandCenter.ship?._REAL_POS.cords[0] || 0],
-      y: [CommandCenter.ship?._REAL_POS.cords[1] || 0],
-      z: [CommandCenter.ship?._REAL_POS.cords[2] || 0],
-      type: "scatter3d",
-      mode: "markers",
-      name: "Ship",
-      marker: { size: 15, color: "#FF0000" },
-    },
-    1
-  );
-  setTimeout(
-    () => window.isDetected && requestAnimationFrame(t => detection(t, graph, CommandCenter, BuildingsGraph)),
-    1000
-  );
+
+  detection(0, CommandCenter);
+}
+
+async function detection(_time: number, CommandCenter: Navigation) {
+  console.log("detected");
+
+  await CommandCenter.initCheck();
+  const [closed, MLS] = CommandCenter.findCord();
+  if (closed) {
+    console.log(closed, MLS);
+    MainGraph.extendsTraceByVec(closed);
+    IterationGraph.extendsTraceByVec(MLS);
+  } else {
+    console.warn("There is no solution ", closed, MLS);
+  }
+
+  CommandCenter.ship?.move();
+
+  setTimeout(() => window.isDetected && requestAnimationFrame(t => detection(t, CommandCenter)), 300);
 }
 
 export function stopDetection(CommandCenter: Navigation) {

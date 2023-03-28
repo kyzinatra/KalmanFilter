@@ -1,8 +1,9 @@
 import Plotly, { Config, Data, Layout } from "plotly.js-dist-min";
+import type { Vec } from "./Vector";
 
 export class Visualize {
   private _layout: Partial<Layout> = {
-    margin: { t: 50 },
+    margin: { t: 70 },
   };
   private _config: Partial<Config> = {
     scrollZoom: true,
@@ -24,6 +25,17 @@ export class Visualize {
   }
   extendTrace(config: Data, ...trace: number[]) {
     Plotly.extendTraces(this._element, config, trace);
+  }
+
+  extendsTraceByVec(vec: Vec) {
+    this.extendTrace(
+      {
+        x: [[vec.cords[0]]],
+        y: [[vec.cords[1]]],
+        z: [[vec.cords[2]]],
+      },
+      0
+    );
   }
   moveTrace(config: Data, ...trace: number[]) {
     Plotly.deleteTraces(this._element, trace);

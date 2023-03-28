@@ -1,6 +1,6 @@
 import { Vec } from "./Vector";
 
-/** @description n*m (m rows and n columns) */
+/** @description n*m (n rows and m columns) */
 export class Matrix {
   private _mtx: number[][] = [];
   constructor(private readonly n: number, private readonly m: number) {
@@ -150,6 +150,8 @@ export class Matrix {
     result.fill((i, j) => this._mtx[j][i]);
     return result;
   }
+
+  choleskyDecomposition() {}
 
   get rowsLength() {
     return this.n;

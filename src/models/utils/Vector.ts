@@ -10,6 +10,12 @@ export class Vec {
     return new Vec(...this.vec.map((c, i) => c + vec2.cords[i]));
   }
 
+  fill(callback: (i: number, value: number) => number) {
+    this.vec.forEach((val, i) => {
+      this.vec[i] = callback(i, val);
+    });
+  }
+
   sub(vec2: Vec) {
     if (this.vec.length !== vec2.cords.length) throw new RangeError("You can only subtract equally sized vectors");
     return new Vec(...this.vec.map((c, i) => c - vec2.cords[i]));
