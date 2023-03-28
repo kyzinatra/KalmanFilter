@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/src/style/index.css" />
     <script type="module" src="/src/main.ts" defer></script>
-    <title>Kalman Filter</title>
+    <link rel="shortcut icon" href="icon.png" type="image/png" />
+    <title>Ship MLAT</title>
   </head>
   <body>
     <div class="main__graphs">
@@ -19,6 +20,7 @@
         <form id="create-ship-form">
           <input type="number" required placeholder="x" class="inpt" />
           <input type="number" required placeholder="y" class="inpt" />
+          <input type="number" required placeholder="z" class="inpt" />
           <button type="submit" class="btn">Create ship</button>
         </form>
       </div>
@@ -35,6 +37,7 @@
       <button id="signal-send" class="btn">Send signal manually</button>
       <button id="signal-start" class="btn">Start position detected</button>
       <button id="signal-stop" class="btn">Stop position detected</button>
+      <button id="signal-clear" class="btn">Clear all</button>
     </div>
 
     <div class="graphs">

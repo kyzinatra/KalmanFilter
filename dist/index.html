@@ -3,10 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Kalman Filter</title>
-    <script type="module" defer crossorigin src="./assets/index-c3371dea.js"></script>
-    <link rel="stylesheet" href="./assets/index-4cff969f.css" />
+    
+    
+    <link rel="shortcut icon" href="icon.png" type="image/png" />
+    <title>Ship MLAT</title>
+    <script type="module" crossorigin src="./assets/index-7769fb09.js"></script>
+    <link rel="stylesheet" href="./assets/index-4cff969f.css">
   </head>
   <body>
     <div class="main__graphs">
@@ -20,6 +22,7 @@
         <form id="create-ship-form">
           <input type="number" required placeholder="x" class="inpt" />
           <input type="number" required placeholder="y" class="inpt" />
+          <input type="number" required placeholder="z" class="inpt" />
           <button type="submit" class="btn">Create ship</button>
         </form>
       </div>
@@ -36,6 +39,7 @@
       <button id="signal-send" class="btn">Send signal manually</button>
       <button id="signal-start" class="btn">Start position detected</button>
       <button id="signal-stop" class="btn">Stop position detected</button>
+      <button id="signal-clear" class="btn">Clear all</button>
     </div>
 
     <div class="graphs">

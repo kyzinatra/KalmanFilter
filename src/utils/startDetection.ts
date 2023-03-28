@@ -50,25 +50,27 @@ export async function startDetection(CommandCenter: Navigation) {
 }
 
 async function detection(_time: number, CommandCenter: Navigation) {
-  console.log("detected");
+  CommandCenter.ship?.move();
 
   await CommandCenter.initCheck();
   const [closed, MLS] = CommandCenter.findCord();
   if (closed) {
-    console.log(closed, MLS);
     MainGraph.extendsTraceByVec(closed);
     IterationGraph.extendsTraceByVec(MLS);
   } else {
     console.warn("There is no solution ", closed, MLS);
   }
 
-  CommandCenter.ship?.move();
-
-  setTimeout(() => window.isDetected && requestAnimationFrame(t => detection(t, CommandCenter)), 300);
+  //? synthetic constraint
+  setTimeout(() => window.isDetected && requestAnimationFrame(t => detection(t, CommandCenter)), 200);
 }
 
 export function stopDetection(CommandCenter: Navigation) {
-  console.log("stop");
   CommandCenter.ship?.stop();
   window.isDetected = false;
+}
+
+export function clearDetectionGraphs() {
+  MainGraph.clear(0);
+  IterationGraph.clear(0);
 }

@@ -1,8 +1,7 @@
 import { Navigation } from "./models/Navigation";
 import { Vec } from "./models/utils/Vector";
 import { Visualize } from "./models/utils/Visualize";
-import { startDetection, stopDetection } from "./utils/startDetection";
-
+import { startDetection, stopDetection, clearDetectionGraphs } from "./utils/startDetection";
 const BuildingsGraphEl = document.querySelector("#BuildingsGraph") as HTMLElement;
 
 const beaconForm = document.getElementById("create-beacon-form") as HTMLFormElement;
@@ -10,9 +9,10 @@ const shipForm = document.getElementById("create-ship-form") as HTMLFormElement;
 const sendSignalBtn = document.getElementById("signal-send") as HTMLButtonElement;
 const signalStartBtn = document.getElementById("signal-start") as HTMLButtonElement;
 const signalStopBtn = document.getElementById("signal-stop") as HTMLButtonElement;
+const signalClearBtn = document.getElementById("signal-clear") as HTMLButtonElement;
 
 const [beaconX, beaconY, beaconZ] = beaconForm.elements as any as HTMLInputElement[];
-const [shipX, shipY] = shipForm.elements as any as HTMLInputElement[];
+const [shipX, shipY, shipZ] = shipForm.elements as any as HTMLInputElement[];
 
 const BuildingsGraph = await new Visualize(BuildingsGraphEl).init();
 
@@ -26,7 +26,7 @@ export async function Init() {
 
   shipForm.addEventListener("submit", e => {
     e.preventDefault();
-    shipHandler(new Vec(+shipX.value, +shipY.value, 0), CommandCenter);
+    shipHandler(new Vec(+shipX.value, +shipY.value, +shipZ.value), CommandCenter);
   });
 
   sendSignalBtn.addEventListener("click", () => {
@@ -42,22 +42,26 @@ export async function Init() {
     stopDetection(CommandCenter);
   });
 
+  signalClearBtn.addEventListener("click", () => {
+    CommandCenter.clear();
+    BuildingsGraph.clear(0, 1);
+    clearDetectionGraphs();
+  });
+
   // TODO: Delete for manually control from UI
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 6; i++) {
     beaconHandler(
-      new Vec((Math.random() * 1_000_00) | 0, (Math.random() * 1_000_00) | 0, (Math.random() * 1_000_00) | 0),
+      new Vec((Math.random() * 100_000) | 0, (Math.random() * 100_000) | 0, (Math.random() * 100_000) | 0),
       CommandCenter
     );
   }
 
-  const shipVec = new Vec(Math.random(), Math.random(), Math.random());
+  const shipVec = new Vec(Math.random() * 100, Math.random() * 100, Math.random() * 100);
   shipHandler(shipVec, CommandCenter);
 }
 
 function beaconHandler(vector: Vec, CommandCenter: Navigation) {
-  beaconX.value = "";
-  beaconY.value = "";
-  beaconZ.value = "";
+  [beaconX.value, beaconY.value, beaconZ.value] = ["", "", ""];
   if (!CommandCenter.beacons?.length) {
     BuildingsGraph.addTrace({
       x: [vector.cords[0]],
@@ -105,8 +109,7 @@ function shipHandler(vector: Vec, CommandCenter: Navigation) {
     marker: { size: 15, color: "#FF0000" },
   });
 
-  shipX.value = "";
-  shipY.value = "";
+  [shipX.value, shipY.value, shipZ.value] = ["", "", ""];
 }
 
 Init();

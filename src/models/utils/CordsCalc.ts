@@ -18,7 +18,10 @@ export class CordsCalc {
    * */
   getClosedSolution(mes: Beacon[]) {
     if (mes.length !== 4) {
-      if (mes.length < 4) throw new Error("You must create at least four beacons");
+      if (mes.length < 4) {
+        alert("You must create at least five beacons");
+        return [];
+      }
 
       const results: Vec[][] = [];
       for (let i = 0; i < Math.ceil(mes.length / 4); i++) {
@@ -88,7 +91,9 @@ export class CordsCalc {
       )
     );
 
-    const AdjustmentSolution = approx.add(A.transpose().mtxMul(A).inv().mtxMul(A.transpose()).vecMul(dm));
+    const A_T = A.transpose();
+
+    const AdjustmentSolution = approx.add(A_T.mtxMul(A).inv().mtxMul(A_T).vecMul(dm));
 
     return AdjustmentSolution;
   }

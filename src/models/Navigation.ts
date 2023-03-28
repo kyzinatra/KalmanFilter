@@ -6,6 +6,7 @@ import { Vec } from "./utils/Vector";
 export class Navigation {
   private _beacons: Beacon[] = [];
   private _ship: Ship | null = null;
+  private pathHistory: [Vec, Vec][] = [];
 
   constructor() {}
 
@@ -38,11 +39,22 @@ export class Navigation {
     const cords = new CordsCalc();
 
     const result = cords.filterResult(cords.getClosedSolution(this._beacons));
-    const MLSResult = cords.getIterativeSolutionByMLS(this._beacons, result);
+    const MLSResult = cords.getIterativeSolutionByMLS(
+      this._beacons,
+      this.pathHistory[this.pathHistory.length - 1]?.[1] || result
+    );
 
     this._beacons.forEach(b => b.clear());
     if (!result) return [new Vec(), new Vec()];
+
+    this.pathHistory.push([result, MLSResult]);
     return [result, MLSResult];
+  }
+
+  clear() {
+    this._ship?.clearGraph();
+    this._ship = null;
+    this._beacons = [];
   }
 
   get ship() {

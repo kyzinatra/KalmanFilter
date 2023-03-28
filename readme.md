@@ -27,6 +27,17 @@ npm run dev
 
 This will start the development server, and you can access the project by opening your web browser and navigating to http://localhost:5173.
 
+## Codebase Information
+
+The `src/models` folder contains classes of physical models. So the navigation class is responsible for the joint work of the ship and beacons. It stores instances of all beacons and the ship. It also creates them and initializes the sending of signals to the beacons by the initCheck method. After the calculation of positions occurs in the findCord method. A closed solution is calculated and another solution is iteratively calculated, which relies on the closed solution once, and then uses its previous solutions. After the solution is returned to be displayed on the screen.
+
+All utility classes for rendering and calculations are located in `src/models/utils`. The main `CordsCalc` class computes the solutions discussed earlier. It also stores the implementation of the `matrix` and `vector`.
+
+Start tracking is in `src/utils/startDetection.ts`. The detection function initializes the distribution of signals to beacons and then starts the calculation of coordinates and draws the result. It also runs the `Ship.move()` function to move the ship through space.
+By default, 6 beacons and a ship are drawn. You can clear all graphs by clicking the clear button.
+
+All other files are needed for the UI and are not directly involved in the simulation.
+
 ## How it Works
 
 The Kalman filter is a mathematical tool used to estimate the state of a system based on a series of noisy measurements. In this project, we are using it to estimate the position of a ship as it navigates through three beacons. The beacons are assumed to be at known locations, and the ship's position is estimated based on the time it takes for the signal from each beacon to reach the ship.
@@ -50,8 +61,8 @@ Time difference between Tower 2 and Tower 3 = t3 - t2
 
 Assuming the speed of the signal is constant (for example, the speed of light), we can calculate the differences in distances between the ship and each pair of towers as follows:
 
-Difference in distance between Tower 1 and Tower 2 = (t2 - t1) _ speed of signal
-Difference in distance between Tower 1 and Tower 3 = (t3 - t1) _ speed of signal
+Difference in distance between Tower 1 and Tower 2 = (t2 - t1) \* speed of signal
+Difference in distance between Tower 1 and Tower 3 = (t3 - t1) \* speed of signal
 Difference in distance between Tower 2 and Tower 3 = (t3 - t2) \* speed of signal
 
 1. Use the differences in distances to create two hyperbolas, each representing the possible location of the aircraft:
@@ -94,8 +105,6 @@ Where:
 `(x3, y3, z3)` are the coordinates of Tower 3.
 `d2` is the constant difference between the distances from the ship to Tower 1 and Tower 3.
 This equation represents all the possible points `(x, y, z)` that satisfy the condition that the difference between the distance from the ship to Tower 1 and the distance from the ship to Tower 3 is constant and equal to `d2`.
-
-_The intersection of these two hyperboloids represents the possible location of the ship. The exact intersection point(s) can be found using numerical methods, such as nonlinear least squares or maximum likelihood estimation._
 
 ## Credits
 

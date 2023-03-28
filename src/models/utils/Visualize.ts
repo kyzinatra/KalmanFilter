@@ -41,5 +41,7 @@ export class Visualize {
     Plotly.deleteTraces(this._element, trace);
     Plotly.addTraces(this._element, config);
   }
-  clear() {}
+  clear(...traces: number[]) {
+    Plotly.deleteTraces(this._element, traces);
+  }
 }

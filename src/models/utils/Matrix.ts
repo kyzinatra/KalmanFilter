@@ -151,6 +151,7 @@ export class Matrix {
     return result;
   }
 
+  // todo to inverse symmetric matrix
   choleskyDecomposition() {}
 
   get rowsLength() {
