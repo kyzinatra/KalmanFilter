@@ -1,37 +1,25 @@
+import { TIME_TO_DETECT } from "../constants/time";
 import type { Navigation } from "../models/Navigation";
-import type { Vec } from "../models/utils/Vector";
+import { Vec } from "../models/utils/Vector";
 import { Visualize } from "../models/utils/Visualize";
+import { get2DGraphSettings, getGraphSettings } from "./getSettings";
+import { getNow } from "./time";
 
 declare global {
   interface Window {
     isDetected: boolean;
   }
 }
-function getSettings(vec: Vec) {
-  return {
-    x: [vec.cords[0] || 0],
-    y: [vec.cords[1] || 0],
-    z: [vec.cords[2] || 0],
-    mode: "lines+markers",
-    marker: {
-      color: "rgb(127, 0, 127)",
-      size: 5,
-      symbol: "circle",
-      line: {
-        color: "rgb(204, 0, 204)",
-        width: 2,
-      },
-      opacity: 0.8,
-    },
-    type: "scatter3d",
-  } as any;
-}
 
-const ClosedEl = document.querySelector("#closed") as HTMLElement;
-const IterationEl = document.querySelector("#MLS") as HTMLElement;
+const ClosedEl = document.getElementById("closed") as HTMLElement;
+const IterationEl = document.getElementById("MLS") as HTMLElement;
+const ShipClosedEl = document.getElementById("ship-closed") as HTMLElement;
+const ShipMLSEl = document.getElementById("ship-MLS") as HTMLElement;
 
 const MainGraph = await new Visualize(ClosedEl, { title: "Closed solution" }).init();
 const IterationGraph = await new Visualize(IterationEl, { title: "MLS solution" }).init();
+const ShipClosedGraph = await new Visualize(ShipClosedEl, { title: "|ship - closed|" }).init();
+const ShipMLSGraph = await new Visualize(ShipMLSEl, { title: "|ship - MLS|" }).init();
 
 export async function startDetection(CommandCenter: Navigation) {
   if (window.isDetected) return;
@@ -41,8 +29,12 @@ export async function startDetection(CommandCenter: Navigation) {
 
   const [closed, MLS] = CommandCenter.findCord();
 
-  MainGraph.addTrace(getSettings(closed));
-  IterationGraph.addTrace(getSettings(MLS));
+  MainGraph.addTrace(getGraphSettings(closed));
+  IterationGraph.addTrace(getGraphSettings(MLS));
+
+  const posDiffVec = new Vec(0, 0);
+  ShipClosedGraph.addTrace(get2DGraphSettings(posDiffVec));
+  ShipMLSGraph.addTrace(get2DGraphSettings(posDiffVec));
 
   CommandCenter.ship?.move();
 
@@ -57,12 +49,15 @@ async function detection(_time: number, CommandCenter: Navigation) {
   if (closed) {
     MainGraph.extendsTraceByVec(closed);
     IterationGraph.extendsTraceByVec(MLS);
+
+    ShipClosedGraph.extendsTraceByVec(new Vec(getNow(), CommandCenter.ship?.getPositionDiff(closed) || 0), true);
+    ShipMLSGraph.extendsTraceByVec(new Vec(getNow(), CommandCenter.ship?.getPositionDiff(MLS) || 0), true);
   } else {
     console.warn("There is no solution ", closed, MLS);
   }
 
   //? synthetic constraint
-  setTimeout(() => window.isDetected && requestAnimationFrame(t => detection(t, CommandCenter)), 200);
+  setTimeout(() => window.isDetected && requestAnimationFrame(t => detection(t, CommandCenter)), TIME_TO_DETECT);
 }
 
 export function stopDetection(CommandCenter: Navigation) {

@@ -1,15 +1,13 @@
 import { Navigation } from "./models/Navigation";
 import { Vec } from "./models/utils/Vector";
 import { Visualize } from "./models/utils/Visualize";
-import { startDetection, stopDetection, clearDetectionGraphs } from "./utils/startDetection";
+import { startDetection, stopDetection } from "./utils/startDetection";
 const BuildingsGraphEl = document.querySelector("#BuildingsGraph") as HTMLElement;
 
 const beaconForm = document.getElementById("create-beacon-form") as HTMLFormElement;
 const shipForm = document.getElementById("create-ship-form") as HTMLFormElement;
-const sendSignalBtn = document.getElementById("signal-send") as HTMLButtonElement;
 const signalStartBtn = document.getElementById("signal-start") as HTMLButtonElement;
 const signalStopBtn = document.getElementById("signal-stop") as HTMLButtonElement;
-const signalClearBtn = document.getElementById("signal-clear") as HTMLButtonElement;
 
 const [beaconX, beaconY, beaconZ] = beaconForm.elements as any as HTMLInputElement[];
 const [shipX, shipY, shipZ] = shipForm.elements as any as HTMLInputElement[];
@@ -29,11 +27,6 @@ export async function Init() {
     shipHandler(new Vec(+shipX.value, +shipY.value, +shipZ.value), CommandCenter);
   });
 
-  sendSignalBtn.addEventListener("click", () => {
-    CommandCenter.initCheck();
-    CommandCenter.findCord();
-  });
-
   signalStartBtn.addEventListener("click", () => {
     startDetection(CommandCenter);
   });
@@ -42,14 +35,8 @@ export async function Init() {
     stopDetection(CommandCenter);
   });
 
-  signalClearBtn.addEventListener("click", () => {
-    CommandCenter.clear();
-    BuildingsGraph.clear(0, 1);
-    clearDetectionGraphs();
-  });
-
   // TODO: Delete for manually control from UI
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 8; i++) {
     beaconHandler(
       new Vec((Math.random() * 100_000) | 0, (Math.random() * 100_000) | 0, (Math.random() * 100_000) | 0),
       CommandCenter

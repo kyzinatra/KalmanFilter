@@ -92,7 +92,6 @@ export class CordsCalc {
     );
 
     const A_T = A.transpose();
-
     const AdjustmentSolution = approx.add(A_T.mtxMul(A).inv().mtxMul(A_T).vecMul(dm));
 
     return AdjustmentSolution;

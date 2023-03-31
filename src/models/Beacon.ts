@@ -1,5 +1,11 @@
 import type { Vec } from "./utils/Vector";
 import { v4 as uuid } from "uuid";
+
+/**
+ * @description Beacon class is used to simulate the beacon.
+ * It has a position in 3D space and can accept signals from the ship.
+ * It controlled by Navigation class, like the ship, like a beacon in real life.
+ */
 export class Beacon {
   private _signals: number[] = [];
   id: string;

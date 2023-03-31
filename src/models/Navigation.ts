@@ -1,3 +1,4 @@
+import { TIMES_TO_MLS } from "../constants/time";
 import { Beacon } from "./Beacon";
 import { Ship } from "./Ship";
 import { CordsCalc } from "./utils/CordsCalc";
@@ -25,7 +26,7 @@ export class Navigation {
     if (!this._ship || !this._beacons) throw new Error("No beacons or ship on the field");
     //? Model limitations. We do not simulate the flight of light and get just delay
     const delays = this._beacons.map(bcn => this._ship?.getLightDelay(new Vec(...bcn.pos)) || 0);
-    const dateNow = performance.now() / 10;
+    const dateNow = performance.now() / 100;
     delays.forEach((del, i) => {
       //? Just as if the package from the beacon was sent to the ship, and all the clocks on the beacons are synchronized
       //? ms/1000 = s
@@ -39,10 +40,12 @@ export class Navigation {
     const cords = new CordsCalc();
 
     const result = cords.filterResult(cords.getClosedSolution(this._beacons));
-    const MLSResult = cords.getIterativeSolutionByMLS(
-      this._beacons,
-      this.pathHistory[this.pathHistory.length - 1]?.[1] || result
-    );
+    let approx = this.pathHistory[this.pathHistory.length - 1]?.[1] || result;
+    let MLSResult: Vec = new Vec();
+    for (let i = 0; i < TIMES_TO_MLS; i++) {
+      MLSResult = cords.getIterativeSolutionByMLS(this._beacons, approx);
+      approx = MLSResult;
+    }
 
     this._beacons.forEach(b => b.clear());
     if (!result) return [new Vec(), new Vec()];

@@ -83,3 +83,8 @@ body {
   justify-content: center;
   align-items: center;
 }
+
+.subst__graphs {
+  display: flex;
+  justify-content: space-between;
+}
