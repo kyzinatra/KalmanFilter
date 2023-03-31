@@ -7,14 +7,23 @@
     
     <link rel="shortcut icon" href="icon.png" type="image/png" />
     <title>Ship MLAT</title>
-    <script type="module" crossorigin src="./assets/index-7769fb09.js"></script>
-    <link rel="stylesheet" href="./assets/index-4cff969f.css">
+    <script type="module" crossorigin src="./assets/index-1d929017.js"></script>
+    <link rel="stylesheet" href="./assets/index-9192d706.css">
   </head>
   <body>
+    <div class="subst__graphs">
+      <div style="height: 500px; width: 50%" id="ship-closed"></div>
+      <div style="height: 500px; width: 50%" id="ship-MLS"></div>
+    </div>
     <div class="main__graphs">
       <div style="height: 700px; width: 33%" id="ship"></div>
       <div style="height: 700px; width: 33%" id="closed"></div>
       <div style="height: 700px; width: 33%" id="MLS"></div>
+    </div>
+
+    <div id="signal-controls">
+      <button id="signal-start" class="btn">Start position detected</button>
+      <button id="signal-stop" class="btn">Stop position detected</button>
     </div>
 
     <div class="forms">
@@ -34,12 +43,6 @@
           <button type="submit" class="btn">Create beacon</button>
         </form>
       </div>
-    </div>
-    <div id="signal-controls">
-      <button id="signal-send" class="btn">Send signal manually</button>
-      <button id="signal-start" class="btn">Start position detected</button>
-      <button id="signal-stop" class="btn">Stop position detected</button>
-      <button id="signal-clear" class="btn">Clear all</button>
     </div>
 
     <div class="graphs">
