@@ -1,7 +1,7 @@
 import { TIMES_TO_MLS } from "../constants/time";
 import { Beacon } from "./Beacon";
 import { Ship } from "./Ship";
-import { CordsCalc } from "./utils/CordsCalc";
+import { coordsCalc } from "./utils/CoordsCalc";
 import { Vec } from "./utils/Vector";
 
 export class Navigation {
@@ -34,16 +34,17 @@ export class Navigation {
     });
   }
 
-  findCord() {
+  findCoords() {
     if (!this._beacons) throw new Error("No beacons created");
 
-    const cords = new CordsCalc();
+    const coords = new coordsCalc();
 
-    const result = cords.filterResult(cords.getClosedSolution(this._beacons));
+    const result = coords.filterResult(coords.getClosedSolution(this._beacons));
+
     let approx = this.pathHistory[this.pathHistory.length - 1]?.[1] || result;
     let MLSResult: Vec = new Vec();
     for (let i = 0; i < TIMES_TO_MLS; i++) {
-      MLSResult = cords.getIterativeSolutionByMLS(this._beacons, approx);
+      MLSResult = coords.getIterativeSolutionByMLS(this._beacons, approx);
       approx = MLSResult;
     }
 

@@ -15,7 +15,7 @@ export class Beacon {
   }
 
   get pos(): number[] {
-    return this._pos.cords;
+    return this._pos.coords;
   }
 
   /** @description accept signal form the ship (navigation post) you have to divide difference by TIMEOUT_FACTOR before using */

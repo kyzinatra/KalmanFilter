@@ -47,6 +47,6 @@ export class Ship {
   }
 
   getPositionDiff(fromPos: Vec): number {
-    return this.pos.sub(new Vec(...fromPos.cords.slice(0, 3))).mod;
+    return this.pos.sub(new Vec(...fromPos.coords.slice(0, 3))).mod;
   }
 }

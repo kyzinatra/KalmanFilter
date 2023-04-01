@@ -3,9 +3,9 @@ import type { Vec } from "../models/utils/Vector";
 
 export function getGraphSettings(vec: Vec, color1: string = "127 0 127", color2: string = "204 0 204"): Data {
   return {
-    x: [vec.cords[0] || 0],
-    y: [vec.cords[1] || 0],
-    z: [vec.cords[2] || 0],
+    x: [vec.coords[0] || 0],
+    y: [vec.coords[1] || 0],
+    z: [vec.coords[2] || 0],
     mode: "lines+markers",
     marker: {
       color: `rgb(${color1?.split(" ").join(", ")})`,
@@ -23,8 +23,8 @@ export function getGraphSettings(vec: Vec, color1: string = "127 0 127", color2:
 
 export function get2DGraphSettings(vec: Vec, color1: string = "127 0 127", color2: string = "204 0 204"): Data {
   return {
-    x: [vec.cords[0] || 0],
-    y: [vec.cords[1] || 0],
+    x: [vec.coords[0] || 0],
+    y: [vec.coords[1] || 0],
     mode: "lines+markers",
     marker: {
       color: `rgb(${color1?.split(" ").join(", ")})`,

@@ -1,7 +1,7 @@
 import { Navigation } from "./models/Navigation";
 import { Vec } from "./models/utils/Vector";
 import { Visualize } from "./models/utils/Visualize";
-import { startDetection, stopDetection } from "./utils/startDetection";
+import { startDetection, stopDetection } from "./utils/detection";
 const BuildingsGraphEl = document.querySelector("#BuildingsGraph") as HTMLElement;
 
 const beaconForm = document.getElementById("create-beacon-form") as HTMLFormElement;
@@ -51,9 +51,9 @@ function beaconHandler(vector: Vec, CommandCenter: Navigation) {
   [beaconX.value, beaconY.value, beaconZ.value] = ["", "", ""];
   if (!CommandCenter.beacons?.length) {
     BuildingsGraph.addTrace({
-      x: [vector.cords[0]],
-      y: [vector.cords[1]],
-      z: [vector.cords[2]],
+      x: [vector.coords[0]],
+      y: [vector.coords[1]],
+      z: [vector.coords[2]],
       type: "scatter3d",
       mode: "lines+markers",
       name: "Beacons",
@@ -70,9 +70,9 @@ function beaconHandler(vector: Vec, CommandCenter: Navigation) {
     return;
   }
   const data = {
-    x: [[vector.cords[0]]],
-    y: [[vector.cords[1]]],
-    z: [[vector.cords[2]]],
+    x: [[vector.coords[0]]],
+    y: [[vector.coords[1]]],
+    z: [[vector.coords[2]]],
   };
   BuildingsGraph.extendTrace(data, 0);
   CommandCenter.createBeacon(vector);
@@ -87,9 +87,9 @@ function shipHandler(vector: Vec, CommandCenter: Navigation) {
   }
   CommandCenter.createShip(vector);
   BuildingsGraph.addTrace({
-    x: [vector.cords[0]],
-    y: [vector.cords[1]],
-    z: [vector.cords[2]],
+    x: [vector.coords[0]],
+    y: [vector.coords[1]],
+    z: [vector.coords[2]],
     type: "scatter3d",
     mode: "markers",
     name: "Ship",

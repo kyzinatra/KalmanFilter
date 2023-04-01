@@ -24,7 +24,7 @@ export class Matrix {
     const res = new Vec();
     for (let n = 0; n < this._mtx.length; n++) {
       for (let m = 0; m < Math.min(this._mtx[n].length, vec.length); m++) {
-        res.addToCord(n, this._mtx[n][m] * vec.cords[m]);
+        res.addToCoord(n, this._mtx[n][m] * vec.coords[m]);
       }
     }
     return res;
@@ -151,7 +151,7 @@ export class Matrix {
     return result;
   }
 
-  // todo to inverse symmetric matrix
+  //  inverse symmetric matrix
   choleskyDecomposition() {}
 
   get rowsLength() {

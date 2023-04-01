@@ -1,6 +1,6 @@
 # Kalman Filter
 
-This is a project that demonstrates the use of a Kalman filter for estimating the position of a ship navigating through three beacons. The data is visualized using TypeScript and ChartJS.
+This is a project that demonstrates the use of a Kalman filter for estimating the position of a ship navigating through three beacons. The data is visualized using TypeScript and PlotyJs.
 
 ## Installation
 
@@ -27,82 +27,101 @@ npm run dev
 
 This will start the development server, and you can access the project by opening your web browser and navigating to http://localhost:5173.
 
-## Codebase Information
+## Brief Codebase Information
 
-The `src/models` folder contains classes of physical models. So the navigation class is responsible for the joint work of the ship and beacons. It stores instances of all beacons and the ship. It also creates them and initializes the sending of signals to the beacons by the initCheck method. After the calculation of positions occurs in the findCord method. The closed solution is calculated and another solution is iteratively calculated using the least squares method, which relies on the closed solution 1 time, and then uses its previous solutions. After the solution is returned to be displayed on the screen.
+The `src/models` folder contains classes of physical models. So the navigation class is responsible for the join to work of the ship and beacons. It stores instances of all beacons and the ship. It also creates them and initializes the sending of signals to the beacons by the initCheck method. After the calculation of positions occurs in the findCoord method. The closed solution is calculated and another solution is iteratively calculated using the least squares method, which relies on the closed solution 1 time, and then uses its previous solutions. After the solution is returned to be displayed on the screen.
 
-All utility classes for rendering and calculations are located in `src/models/utils`. The main CordsCalc class computes the solutions discussed earlier. It also stores the implementation of the matrix and vector.
+All utility classes for rendering and calculations are located in `src/models/utils`. The main CoordsCalc class computes the solutions discussed earlier. It also stores the implementation of the matrix and vector.
 Start tracking is in `src/utils/startDetection`. The detection function initializes the distribution of signals to beacons and then starts the calculation of coordinates and draws the result. It also runs the `Ship.move()` function to move the ship through space.
 
 By default, 6 beacons and a ship are drawn. You can clear all graphs by clicking the clear button. All other files are needed for the UI and are not directly involved in the modeling. In the main upper part there are 3 graphs that represent the real position of the ship. Its calculation using a closed solution, that is, not an iterative solution, and the last one, for a solution using the least squares method. That is an iterative solution. Below is a graph of the initial location of the vessel and towers.
 
-## How it Works
+## Signal generation
 
-The Kalman filter is a mathematical tool used to estimate the state of a system based on a series of noisy measurements. In this project, we are using it to estimate the position of a ship as it navigates through three beacons. The beacons are assumed to be at known locations, and the ship's position is estimated based on the time it takes for the signal from each beacon to reach the ship.
+To freely receive and process signals, I created a `Navigation` class that creates, stores and uses all instances of the `Ship` and `Beacon` classes. This class implements the `initCheck()` method to send a signal from the ship to beacons. To do this, there is a `getLightDelay()` method on the ship, which returns the delay that is necessary for the light to go from the ship to the lighthouse. After this time is added to the current time and sent to beacons. After this moment, nowhere else possible to find out the time it took the signal to reach the beacons. In the `findCord()` method (which will be discussed later), we only have the exact position of each beacon and TOA (Time of signal arrival). We need to calculate TOE (time of signal emission) and get.
 
-The Kalman filter uses a series of predictions and updates to estimate the state of the system. In this case, the state of the system is the position of the ship. The predictions use the known dynamics of the system to estimate where the ship is likely to be at a given time. The updates use the noisy measurements from the beacons to correct the predicted state and improve the estimate of the ship's position.
+`findCord()` method simply run all methods from `CoordsCalc` class and return result to the main process, which print it on the screen in `src/utils/detection.ts`.
 
-The visualization shows the estimated position of the ship over time, along with the actual position and the measurements from the beacons. The Kalman filter is able to track the position of the ship more accurately than simply using the noisy measurements from the beacons.
+## Methods
 
-## Trilateration description
+### Algorithms for Closed Solution
 
-If you do not have the exact time for which the signal travels from the ship to the tower, but only the time of arrival of the signal at each of the three towers, you can use trilateration to determine the position of the ship. However, you will need an additional piece of information - the time difference between the signals arriving at each tower.
+> The solutions presented in this section are mathematically exact, which means that they use algebraic approaches to solve the problem of hyperbolic positioning. Basically, the problem can be defined by the following system of equations which is set up by writing down equation for different stations [[1]](#source):
 
-1. Determine the time difference between the arrival of the signal at each pair of towers:
-   Let's say the signal arrives at Tower 1 at time t1, at Tower 2 at time t2, and at Tower 3 at time t3. We can then calculate the time differences between the arrival of the signal at each pair of towers as follows:
+$c(t_i - t_e) = \sqrt{(x_i - x)^2 + (y_i - y)^2 + (z_i - z)^2}$
 
-Time difference between Tower 1 and Tower 2 = t2 - t1
-Time difference between Tower 1 and Tower 3 = t3 - t1
-Time difference between Tower 2 and Tower 3 = t3 - t2
+Where is $t_i$ is TOA (Time of signal arrival) and $t_e$ is TOE (Time of signal emission).
+Since we have 3-dimensional case we need four equations to solve the problem. (`x`, `y`, `z` and $t_e$)
 
-1. Use the time differences to calculate the differences in distances between the aircraft and each pair of towers:
+### Bancroft's Algorithm
 
-Assuming the speed of the signal is constant (for example, the speed of light), we can calculate the differences in distances between the ship and each pair of towers as follows:
+The calculations starts with some equation transformation. First of all, we square the equation:
 
-Difference in distance between Tower 1 and Tower 2 = (t2 - t1) \* speed of signal
-Difference in distance between Tower 1 and Tower 3 = (t3 - t1) \* speed of signal
-Difference in distance between Tower 2 and Tower 3 = (t3 - t2) \* speed of signal
+$с^2 (t_i - t_e)^2 = (x_i - x)^2 + (y^i - y)^2 + (z_i - z)^2$
 
-1. Use the differences in distances to create two hyperbolas, each representing the possible location of the aircraft:
+$2(x_i x + y_i y - c^2 t_i t_e) = x^2 + y^2 - c^2 t_e^2 + x_i^2 + y_i^2 - c^2 t_i^2$
 
-Using the differences in distances calculated in step 2, we can create two hyperbolas that represent the possible location of the ship. To do this, we first need to find the two foci of each hyperbola. The foci of each hyperbola represent the locations of the two towers that contributed to the difference in distance.
+> In this case TDOA (Time difference of signal arrival) it's just a useful information which can be retrieved from TOA
+>
+> $|d_i - d_j| = \sqrt{(x_i - x)^2 + (y_i - y)^2 + (z_i - z)^2} - \sqrt{(x_j - x)^2 + (y_j - y)^2 + (z_j - z)^2}$
 
-For example, let's say the differences in distances we calculated in step 2 are:
+It makes no sense to show all the transformations and mathematical calculations there. You can see it here [[1]](#source). I'll show the result and move on the implementation.
 
-Difference in distance between Tower 1 and Tower 2 = d1
-Difference in distance between Tower 1 and Tower 3 = d2
-Difference in distance between Tower 2 and Tower 3 = d3
-To create the first hyperbola, we would draw a curve such that the difference between the distances from the aircraft to Tower 1 and Tower 2 is constant, and equal to d1. The foci of this hyperbola would be at the locations of Tower 1 and Tower 2.
+![Bncroft_First](./assets/Bancroft%20First.png)
+![Bncroft_First](./assets/Bancroft%20Second.png)
 
-To create the second hyperbola, we would draw a curve such that the difference between the distances from the aircraft to Tower 1 and Tower 3 is constant, and equal to d2. The foci of this hyperbola would be at the locations of Tower 1 and Tower 3.
+To implement this to code, I created the `Vector` and `Matrix` classes.
 
-1. The intersection point of the two hyperbolas is the actual position of the aircraft:
+`Vector` class have a usual methods such as `mul()`, `sub()`, `add()`. You can multiply `Vector` by `Vector` or `Number`. You can see the implementation in the `./src/modules/Vector.ts` file.
 
-The intersection point of the two hyperbolas represents the possible location of the ship. This is because the ship could be at any point on either of the two hyperbolas, and the time difference measurements do not provide enough information to determine the exact location. However, the intersection point is the only point that satisfies both hyperbolas, so it represents the most likely location of the ship.
+Next, I created a `Matrix` class for my tasks. I have 3 different methods for multiplying by a scalar, a vector and another matrix, methods have also been made to calculate the determinant in `O(n^3)` and simply matrix invert by adding an identity matrix on the right. All these methods allowed me feel free to work with the formulas above and create the `getClosedSolution()` method, which implements all these mathematical calculations.
 
-It is important to note that trilateration with time difference measurements can also be affected by various factors such as the accuracy of the time measurements and the presence of obstacles that can affect the signal transmission.
+### Applied Adjustment Theory in Multilateration
 
-### Example
+> In Multilateration the basic equations are built by the well known equation system, shown above. These equations can be transformed into the following form and, for the sake of simplicity, we newly replace the time variables by the so-called pseudo ranges [[1]](#source)
 
-Assuming that the aircraft is located at point (x,y,z), the equations for the hyperboloids representing the possible locations of the aircraft can be written as follows:
+$ct_i = \sqrt{(x_i - x)^2 + (y_i - y)^2 + (z_i - z)^2} + ct_e$
 
-Hyperboloid 1:
-`sqrt((x - x1)^2 + (y - y1)^2 + (z - z1)^2) - sqrt((x - x2)^2 + (y - y2)^2 + (z - z2)^2) = d1`
+1. We have to calculate the following derivatives to perform the tailor expansion
 
-Where:
+$\frac{\partial m_i}{\partial x} = \frac{x - x_i}{d_i}$
 
-`(x1, y1, z1)` and `(x2, y2, z2)` are the coordinates of Tower 1 and Tower 2, respectively.
-`d1` is the constant difference between the distances from the ship to Tower 1 and Tower 2.
-This equation represents all the possible points `(x, y, z)` that satisfy the condition that the difference between the distance from the ship to Tower 1 and the distance from the ship to Tower 2 is constant and equal to `d1`.
+$\frac{\partial m_i}{\partial y} = \frac{y - y_i}{d_i}$
 
-Hyperboloid 2:
-`sqrt((x - x1)^2 + (y - y1)^2 + (z - z1)^2) - sqrt((x - x3)^2 + (y - y3)^2 + (z - z3)^2) = d2`
+$\frac{\partial m_i}{\partial z} = \frac{z - z_i}{d_i}$
 
-Where:
+$\frac{\partial m_i}{\partial r_e} = 1$
 
-`(x3, y3, z3)` are the coordinates of Tower 3.
-`d2` is the constant difference between the distances from the ship to Tower 1 and Tower 3.
-This equation represents all the possible points `(x, y, z)` that satisfy the condition that the difference between the distance from the ship to Tower 1 and the distance from the ship to Tower 3 is constant and equal to `d2`.
+$d_i = \sqrt{(x_i - x)^2 + (y_i - y)^2}$
+
+Where the $d_i$ is the distance between the i-th base stations and the target.
+So, we can get the following system
+
+$d\vec{m} = Ad\vec{x}$
+
+where
+
+$A = \begin{bmatrix}\frac{\partial m_1}{\partial x}(\vec{x_a}) & \frac{\partial m_1}{\partial y}(\vec{x_a}) & \frac{\partial m_1}{\partial z}(\vec{x_a}) & \frac{\partial m_1}{\partial r_e}(\vec{x_a})\\\frac{\partial m_2}{\partial x}(\vec{x_a}) & \frac{\partial m_2}{\partial y}(\vec{x_a}) & \frac{\partial m_2}{\partial z}(\vec{x_a}) & \frac{\partial m_2}{\partial r_e}(\vec{x_a})\\ . & . & . & .\\ . & . & . & .\\ . & . & . & .\\\frac{\partial m_n}{\partial x}(\vec{x_a}) & \frac{\partial m_n}{\partial y}(\vec{x_a}) & \frac{\partial m_n}{\partial z}(\vec{x_a}) & \frac{\partial m_n}{\partial r_e}(\vec{x_a})\end{bmatrix}$
+
+$d\vec{m} = \vec{m} - \vec{m}(\vec{x_a})$
+
+$d\vec{x} = \vec{x} - \vec{x_a}$
+
+### Steps to calculate solution
+
+1. Putting up the system matrix A in the point $\vec{x_a}$.
+1. Calculate $d\vec{x}$
+1. Calculate $d\vec{x}$ using these formulas:
+
+$d\vec{x} = (A^TPA)A^TPd\vec{m}$
+
+$\vec{x} = \vec{x_a} + d\vec{x}$
+
+4. Repeat from step 1, but replacing $\vec{x_a}$ by the $\vec{x}$
+
+## Source
+
+1. [Elaboration of Methods and Algorithms for Passive Aircraft and Vehicle Detection over Time of Signal Arrival Differences](https://diglib.tugraz.at/download.php?id=576a75430e75f&location=browse)
 
 ## Credits
 

@@ -35,9 +35,9 @@ export class Visualize {
 
   extendsTraceByVec(vec: Vec, is2d: boolean = false) {
     const points: TPoins = {
-      x: [[vec.cords[0]]],
-      y: [[vec.cords[1]]],
-      z: [[vec.cords[2] || 0]],
+      x: [[vec.coords[0]]],
+      y: [[vec.coords[1]]],
+      z: [[vec.coords[2] || 0]],
     };
 
     if (is2d) delete points.z;
