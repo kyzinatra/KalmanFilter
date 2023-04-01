@@ -101,7 +101,7 @@ $d\vec{m} = Ad\vec{x}$
 
 where
 
-$A = \begin{bmatrix}\frac{\partial m_1}{\partial x}(\vec{x_a}) & \frac{\partial m_1}{\partial y}(\vec{x_a}) & \frac{\partial m_1}{\partial z}(\vec{x_a}) & \frac{\partial m_1}{\partial r_e}(\vec{x_a})\\\frac{\partial m_2}{\partial x}(\vec{x_a}) & \frac{\partial m_2}{\partial y}(\vec{x_a}) & \frac{\partial m_2}{\partial z}(\vec{x_a}) & \frac{\partial m_2}{\partial r_e}(\vec{x_a})\\ . & . & . & .\\ . & . & . & .\\ . & . & . & .\\\frac{\partial m_n}{\partial x}(\vec{x_a}) & \frac{\partial m_n}{\partial y}(\vec{x_a}) & \frac{\partial m_n}{\partial z}(\vec{x_a}) & \frac{\partial m_n}{\partial r_e}(\vec{x_a})\end{bmatrix}$
+![System matrix](./assets/mtx.png)
 
 $d\vec{m} = \vec{m} - \vec{m}(\vec{x_a})$
 
