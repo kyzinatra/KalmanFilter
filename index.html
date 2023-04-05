@@ -6,15 +6,15 @@
     <link rel="stylesheet" href="/src/style/index.css" />
     <script type="module" src="/src/main.ts" defer></script>
     <link rel="shortcut icon" href="icon.png" type="image/png" />
-    <title>Ship MLAT</title>
+    <title>Aircraft MLAT</title>
   </head>
   <body>
     <div class="subst__graphs">
-      <div style="height: 500px; width: 50%" id="ship-closed"></div>
-      <div style="height: 500px; width: 50%" id="ship-MLS"></div>
+      <div style="height: 500px; width: 50%" id="aircraft-closed"></div>
+      <div style="height: 500px; width: 50%" id="aircraft-MLS"></div>
     </div>
     <div class="main__graphs">
-      <div style="height: 700px; width: 33%" id="ship"></div>
+      <div style="height: 700px; width: 33%" id="aircraft"></div>
       <div style="height: 700px; width: 33%" id="closed"></div>
       <div style="height: 700px; width: 33%" id="MLS"></div>
     </div>
@@ -25,20 +25,20 @@
     </div>
 
     <div class="forms">
-      <div id="create-ship">
-        <form id="create-ship-form">
+      <div id="create-aircraft">
+        <form id="create-aircraft-form">
           <input type="number" required placeholder="x" class="inpt" />
           <input type="number" required placeholder="y" class="inpt" />
           <input type="number" required placeholder="z" class="inpt" />
-          <button type="submit" class="btn">Create ship</button>
+          <button type="submit" class="btn">Create aircraft</button>
         </form>
       </div>
-      <div id="create-beacon">
-        <form id="create-beacon-form">
+      <div id="create-recevier">
+        <form id="create-recevier-form">
           <input type="number" required placeholder="x" class="inpt" />
           <input type="number" required placeholder="y" class="inpt" />
           <input type="number" required placeholder="z" class="inpt" />
-          <button type="submit" class="btn">Create beacon</button>
+          <button type="submit" class="btn">Create recevier</button>
         </form>
       </div>
     </div>

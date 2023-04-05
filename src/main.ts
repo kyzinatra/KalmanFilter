@@ -4,27 +4,27 @@ import { Visualize } from "./models/utils/Visualize";
 import { startDetection, stopDetection } from "./utils/detection";
 const BuildingsGraphEl = document.querySelector("#BuildingsGraph") as HTMLElement;
 
-const beaconForm = document.getElementById("create-beacon-form") as HTMLFormElement;
-const shipForm = document.getElementById("create-ship-form") as HTMLFormElement;
+const recevierForm = document.getElementById("create-recevier-form") as HTMLFormElement;
+const aircraftForm = document.getElementById("create-aircraft-form") as HTMLFormElement;
 const signalStartBtn = document.getElementById("signal-start") as HTMLButtonElement;
 const signalStopBtn = document.getElementById("signal-stop") as HTMLButtonElement;
 
-const [beaconX, beaconY, beaconZ] = beaconForm.elements as any as HTMLInputElement[];
-const [shipX, shipY, shipZ] = shipForm.elements as any as HTMLInputElement[];
+const [recevierX, recevierY, recevierZ] = recevierForm.elements as any as HTMLInputElement[];
+const [aircraftX, aircraftY, aircraftZ] = aircraftForm.elements as any as HTMLInputElement[];
 
 const BuildingsGraph = await new Visualize(BuildingsGraphEl).init();
 
 export async function Init() {
   const CommandCenter = new Navigation();
 
-  beaconForm.addEventListener("submit", e => {
+  recevierForm.addEventListener("submit", e => {
     e.preventDefault();
-    beaconHandler(new Vec(+beaconX.value, +beaconY.value, +beaconZ.value), CommandCenter);
+    recevierHandler(new Vec(+recevierX.value, +recevierY.value, +recevierZ.value), CommandCenter);
   });
 
-  shipForm.addEventListener("submit", e => {
+  aircraftForm.addEventListener("submit", e => {
     e.preventDefault();
-    shipHandler(new Vec(+shipX.value, +shipY.value, +shipZ.value), CommandCenter);
+    aircraftHandler(new Vec(+aircraftX.value, +aircraftY.value, +aircraftZ.value), CommandCenter);
   });
 
   signalStartBtn.addEventListener("click", () => {
@@ -37,26 +37,26 @@ export async function Init() {
 
   // TODO: Delete for manually control from UI
   for (let i = 0; i < 8; i++) {
-    beaconHandler(
+    recevierHandler(
       new Vec((Math.random() * 100_000) | 0, (Math.random() * 100_000) | 0, (Math.random() * 100_000) | 0),
       CommandCenter
     );
   }
 
-  const shipVec = new Vec(Math.random() * 100, Math.random() * 100, Math.random() * 100);
-  shipHandler(shipVec, CommandCenter);
+  const aircraftVec = new Vec(Math.random() * 100, Math.random() * 100, Math.random() * 100);
+  aircraftHandler(aircraftVec, CommandCenter);
 }
 
-function beaconHandler(vector: Vec, CommandCenter: Navigation) {
-  [beaconX.value, beaconY.value, beaconZ.value] = ["", "", ""];
-  if (!CommandCenter.beacons?.length) {
+function recevierHandler(vector: Vec, CommandCenter: Navigation) {
+  [recevierX.value, recevierY.value, recevierZ.value] = ["", "", ""];
+  if (!CommandCenter.receviers?.length) {
     BuildingsGraph.addTrace({
       x: [vector.coords[0]],
       y: [vector.coords[1]],
       z: [vector.coords[2]],
       type: "scatter3d",
       mode: "lines+markers",
-      name: "Beacons",
+      name: "Receivers",
       marker: {
         size: 15,
         color: "#0E00CC",
@@ -66,7 +66,7 @@ function beaconHandler(vector: Vec, CommandCenter: Navigation) {
         },
       },
     });
-    CommandCenter.createBeacon(vector);
+    CommandCenter.createReceiver(vector);
     return;
   }
   const data = {
@@ -75,28 +75,28 @@ function beaconHandler(vector: Vec, CommandCenter: Navigation) {
     z: [[vector.coords[2]]],
   };
   BuildingsGraph.extendTrace(data, 0);
-  CommandCenter.createBeacon(vector);
+  CommandCenter.createReceiver(vector);
 }
 
-function shipHandler(vector: Vec, CommandCenter: Navigation) {
-  if (!CommandCenter.beacons?.length) return alert("Create at least one beacon");
+function aircraftHandler(vector: Vec, CommandCenter: Navigation) {
+  if (!CommandCenter.receviers?.length) return alert("Create at least one recevier");
 
-  if (CommandCenter.ship) {
-    alert("You can create only one ship");
+  if (CommandCenter.aircraft) {
+    alert("You can create only one aircraft");
     return;
   }
-  CommandCenter.createShip(vector);
+  CommandCenter.createAircraft(vector);
   BuildingsGraph.addTrace({
     x: [vector.coords[0]],
     y: [vector.coords[1]],
     z: [vector.coords[2]],
     type: "scatter3d",
     mode: "markers",
-    name: "Ship",
+    name: "Aircraft",
     marker: { size: 15, color: "#FF0000" },
   });
 
-  [shipX.value, shipY.value, shipZ.value] = ["", "", ""];
+  [aircraftX.value, aircraftY.value, aircraftZ.value] = ["", "", ""];
 }
 
 Init();

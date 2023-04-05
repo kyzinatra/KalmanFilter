@@ -4,15 +4,15 @@ import { v4 as uuid } from "uuid";
 import { Visualize } from "./utils/Visualize";
 import { getGraphSettings } from "../utils/getSettings";
 
-export class Ship {
+export class Aircraft {
   id: string;
   dt: number = 0;
-  private shipGraph: Visualize | null = null;
+  private aircraftGraph: Visualize | null = null;
 
   constructor(private pos: Vec, private velocity: Vec = new Vec(10, 10, 10)) {
     this.id = uuid();
-    new Visualize(document.getElementById("ship") as HTMLElement, { title: "Real Position" }).init().then(res => {
-      this.shipGraph = res;
+    new Visualize(document.getElementById("aircraft") as HTMLElement, { title: "Real Position" }).init().then(res => {
+      this.aircraftGraph = res;
       res.addTrace(getGraphSettings(pos, "242 0 52", "242 0 52"));
     });
   }
@@ -34,14 +34,14 @@ export class Ship {
   }
 
   private drawGraph() {
-    this.shipGraph?.extendsTraceByVec(this.pos);
+    this.aircraftGraph?.extendsTraceByVec(this.pos);
   }
 
   clearGraph() {
-    this.shipGraph?.clear(0);
+    this.aircraftGraph?.clear(0);
   }
 
-  /** @description get the time in seconds it takes light to reach the ship */
+  /** @description get the time in seconds it takes light to reach the aircraft */
   getLightDelay(fromPos: Vec): number {
     return this.pos.sub(fromPos).mod / LIGHT_SPEED;
   }

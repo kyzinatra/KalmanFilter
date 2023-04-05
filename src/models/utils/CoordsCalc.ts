@@ -1,5 +1,5 @@
 import { E, LIGHT_SPEED } from "../../constants/physic";
-import { Beacon } from "../Beacon";
+import { Receiver } from "../Receiver";
 import { Matrix } from "./Matrix";
 import { Vec } from "./Vector";
 
@@ -10,10 +10,10 @@ function TtoR(t: number) {
 export class coordsCalc {
   constructor() {}
 
-  getClosedSolution(mes: Beacon[]) {
+  getClosedSolution(mes: Receiver[]) {
     if (mes.length !== 4) {
       if (mes.length < 4) {
-        alert("You must create at least five beacons");
+        alert("You must create at least five receviers");
         return [];
       }
 
@@ -52,11 +52,13 @@ export class coordsCalc {
     return [[d.mul(lambda1).add(e), d.mul(lambda2).add(e)]];
   }
 
-  getIterativeSolutionByMLS(measurements: Beacon[], approx: Vec) {
-    function dmCalc(approxPos: number[], beaconPos: number[]) {
+  getIterativeSolutionByMLS(measurements: Receiver[], approx: Vec) {
+    function dmCalc(approxPos: number[], recevierPos: number[]) {
       return (
         Math.sqrt(
-          (beaconPos[0] - approxPos[0]) ** 2 + (beaconPos[1] - approxPos[1]) ** 2 + (beaconPos[2] - approxPos[2]) ** 2
+          (recevierPos[0] - approxPos[0]) ** 2 +
+            (recevierPos[1] - approxPos[1]) ** 2 +
+            (recevierPos[2] - approxPos[2]) ** 2
         ) + approxPos[3]
       );
     }

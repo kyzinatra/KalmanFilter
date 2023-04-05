@@ -13,18 +13,18 @@ declare global {
 
 const ClosedEl = document.getElementById("closed") as HTMLElement;
 const IterationEl = document.getElementById("MLS") as HTMLElement;
-const ShipClosedEl = document.getElementById("ship-closed") as HTMLElement;
-const ShipMLSEl = document.getElementById("ship-MLS") as HTMLElement;
+const AircraftClosedEl = document.getElementById("aircraft-closed") as HTMLElement;
+const AircraftMLSEl = document.getElementById("aircraft-MLS") as HTMLElement;
 
 const MainGraph = await new Visualize(ClosedEl, { title: "Closed solution" }).init();
 const IterationGraph = await new Visualize(IterationEl, { title: "MLS solution" }).init();
-const ShipClosedGraph = await new Visualize(ShipClosedEl, { title: "|ship - closed|" }).init();
-const ShipMLSGraph = await new Visualize(ShipMLSEl, { title: "|ship - MLS|" }).init();
+const AircraftClosedGraph = await new Visualize(AircraftClosedEl, { title: "|aircraft - closed|" }).init();
+const AircraftMLSGraph = await new Visualize(AircraftMLSEl, { title: "|aircraft - MLS|" }).init();
 
 export async function startDetection(CommandCenter: Navigation) {
   if (window.isDetected) return;
   window.isDetected = true;
-  CommandCenter.ship?.start();
+  CommandCenter.aircraft?.start();
   await CommandCenter.initCheck();
 
   const [closed, MLS] = CommandCenter.findCoords();
@@ -33,16 +33,16 @@ export async function startDetection(CommandCenter: Navigation) {
   IterationGraph.addTrace(getGraphSettings(MLS));
 
   const posDiffVec = new Vec(0, 0);
-  ShipClosedGraph.addTrace(get2DGraphSettings(posDiffVec));
-  ShipMLSGraph.addTrace(get2DGraphSettings(posDiffVec));
+  AircraftClosedGraph.addTrace(get2DGraphSettings(posDiffVec));
+  AircraftMLSGraph.addTrace(get2DGraphSettings(posDiffVec));
 
-  CommandCenter.ship?.move();
+  CommandCenter.aircraft?.move();
 
   detection(0, CommandCenter);
 }
 
 async function detection(_time: number, CommandCenter: Navigation) {
-  CommandCenter.ship?.move();
+  CommandCenter.aircraft?.move();
 
   await CommandCenter.initCheck();
   const [closed, MLS] = CommandCenter.findCoords();
@@ -50,8 +50,8 @@ async function detection(_time: number, CommandCenter: Navigation) {
     MainGraph.extendsTraceByVec(closed);
     IterationGraph.extendsTraceByVec(MLS);
 
-    ShipClosedGraph.extendsTraceByVec(new Vec(getNow(), CommandCenter.ship?.getPositionDiff(closed) || 0), true);
-    ShipMLSGraph.extendsTraceByVec(new Vec(getNow(), CommandCenter.ship?.getPositionDiff(MLS) || 0), true);
+    AircraftClosedGraph.extendsTraceByVec(new Vec(getNow(), CommandCenter.aircraft?.getPositionDiff(closed) || 0), true);
+    AircraftMLSGraph.extendsTraceByVec(new Vec(getNow(), CommandCenter.aircraft?.getPositionDiff(MLS) || 0), true);
   } else {
     console.warn("There is no solution ", closed, MLS);
   }
@@ -61,7 +61,7 @@ async function detection(_time: number, CommandCenter: Navigation) {
 }
 
 export function stopDetection(CommandCenter: Navigation) {
-  CommandCenter.ship?.stop();
+  CommandCenter.aircraft?.stop();
   window.isDetected = false;
 }
 
