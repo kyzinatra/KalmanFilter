@@ -63,7 +63,7 @@ $2(x_i x + y_i y - c^2 t_i t_e) = x^2 + y^2 - c^2 t_e^2 + x_i^2 + y_i^2 - c^2 t_
 
 > In this case TDOA (Time difference of signal arrival) it's just a useful information which can be retrieved from TOA
 >
-> $|d_i - d_j| = \sqrt{(x_i - x)^2 + (y_i - y)^2 + (z_i - z)^2} - \sqrt{(x_j - x)^2 + (y_j - y)^2 + (z_j - z)^2}$
+> $c|d_i - d_j| = \sqrt{(x_i - x)^2 + (y_i - y)^2 + (z_i - z)^2} - \sqrt{(x_j - x)^2 + (y_j - y)^2 + (z_j - z)^2}$
 
 It makes no sense to show all the transformations and mathematical calculations there. You can see it here [[1]](#source). I'll show the result and move on the implementation.
 
@@ -80,19 +80,15 @@ Next, I created a `Matrix` class for my tasks. I have 3 different methods for mu
 
 > In Multilateration the basic equations are built by the well known equation system, shown above. These equations can be transformed into the following form and, for the sake of simplicity, we newly replace the time variables by the so-called pseudo ranges [[1]](#source)
 
-$ct_i = \sqrt{(x_i - x)^2 + (y_i - y)^2 + (z_i - z)^2} + ct_e$
+$c(t_i - t_j) = \sqrt{(x_i - x)^2 + (y_i - y)^2 + (z_i - z)^2} - \sqrt{(x_i - x)^2 + (y_i - y)^2 + (z_i - z)^2} $
 
 1. We have to calculate the following derivatives to perform the tailor expansion
 
-$\frac{\partial m_i}{\partial x} = \frac{x - x_i}{d_i}$
+$\frac{\partial m_i}{\partial x}=\frac{x_j-x}{\sqrt{\left(x_j-x\right)^2+\left(y_j-y\right)^2+\left(z_j-z\right)^2}}-\frac{x_i-x}{\sqrt{\left(x_i-x\right)^2+\left(y_i-y\right)^2+\left(z_i-z\right)^2}}$
 
-$\frac{\partial m_i}{\partial y} = \frac{y - y_i}{d_i}$
+$\frac{\partial m_i}{\partial y}=\frac{y_j-y}{\sqrt{\left(x_j-x\right)^2+\left(y_j-y\right)^2+\left(z_j-z\right)^2}}-\frac{y_i-y}{\sqrt{\left(x_i-x\right)^2+\left(y_i-y\right)^2+\left(z_i-z\right)^2}}$
 
-$\frac{\partial m_i}{\partial z} = \frac{z - z_i}{d_i}$
-
-$\frac{\partial m_i}{\partial r_e} = 1$
-
-$d_i = \sqrt{(x_i - x)^2 + (y_i - y)^2}$
+$\frac{\partial m_i}{\partial z}=\frac{z_j-z}{\sqrt{\left(x_j-x\right)^2+\left(y_j-y\right)^2+\left(z_j-z\right)^2}}-\frac{z_i-z}{\sqrt{\left(x_i-x\right)^2+\left(y_i-y\right)^2+\left(z_i-z\right)^2}}$
 
 Where the $d_i$ is the distance between the i-th base stations and the target.
 So, we can get the following system
@@ -113,7 +109,7 @@ $d\vec{x} = \vec{x} - \vec{x_a}$
 1. Calculate $d\vec{x}$
 1. Calculate $d\vec{x}$ using these formulas:
 
-$d\vec{x} = (A^TPA)A^TPd\vec{m}$
+$d\vec{x} = (A^TPA)^{-1}A^TPd\vec{m}$
 
 $\vec{x} = \vec{x_a} + d\vec{x}$
 
