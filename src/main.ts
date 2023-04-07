@@ -2,14 +2,15 @@ import { Navigation } from "./models/Navigation";
 import { Vec } from "./models/utils/Vector";
 import { Visualize } from "./models/utils/Visualize";
 import { startDetection, stopDetection } from "./utils/detection";
+
 const BuildingsGraphEl = document.querySelector("#BuildingsGraph") as HTMLElement;
 
-const recevierForm = document.getElementById("create-recevier-form") as HTMLFormElement;
+const receiversForm = document.getElementById("create-receivers-form") as HTMLFormElement;
 const aircraftForm = document.getElementById("create-aircraft-form") as HTMLFormElement;
 const signalStartBtn = document.getElementById("signal-start") as HTMLButtonElement;
 const signalStopBtn = document.getElementById("signal-stop") as HTMLButtonElement;
 
-const [recevierX, recevierY, recevierZ] = recevierForm.elements as any as HTMLInputElement[];
+const [receiversX, receiversY, receiversZ] = receiversForm.elements as any as HTMLInputElement[];
 const [aircraftX, aircraftY, aircraftZ] = aircraftForm.elements as any as HTMLInputElement[];
 
 const BuildingsGraph = await new Visualize(BuildingsGraphEl).init();
@@ -17,9 +18,9 @@ const BuildingsGraph = await new Visualize(BuildingsGraphEl).init();
 export async function Init() {
   const CommandCenter = new Navigation();
 
-  recevierForm.addEventListener("submit", e => {
+  receiversForm.addEventListener("submit", e => {
     e.preventDefault();
-    recevierHandler(new Vec(+recevierX.value, +recevierY.value, +recevierZ.value), CommandCenter);
+    receiversHandler(new Vec(+receiversX.value, +receiversY.value, +receiversZ.value), CommandCenter);
   });
 
   aircraftForm.addEventListener("submit", e => {
@@ -37,7 +38,7 @@ export async function Init() {
 
   // TODO: Delete for manually control from UI
   for (let i = 0; i < 8; i++) {
-    recevierHandler(
+    receiversHandler(
       new Vec((Math.random() * 100_000) | 0, (Math.random() * 100_000) | 0, (Math.random() * 100_000) | 0),
       CommandCenter
     );
@@ -47,9 +48,9 @@ export async function Init() {
   aircraftHandler(aircraftVec, CommandCenter);
 }
 
-function recevierHandler(vector: Vec, CommandCenter: Navigation) {
-  [recevierX.value, recevierY.value, recevierZ.value] = ["", "", ""];
-  if (!CommandCenter.receviers?.length) {
+function receiversHandler(vector: Vec, CommandCenter: Navigation) {
+  [receiversX.value, receiversY.value, receiversZ.value] = ["", "", ""];
+  if (!CommandCenter.receivers?.length) {
     BuildingsGraph.addTrace({
       x: [vector.coords[0]],
       y: [vector.coords[1]],
@@ -79,7 +80,7 @@ function recevierHandler(vector: Vec, CommandCenter: Navigation) {
 }
 
 function aircraftHandler(vector: Vec, CommandCenter: Navigation) {
-  if (!CommandCenter.receviers?.length) return alert("Create at least one recevier");
+  if (!CommandCenter.receivers?.length) return alert("Create at least one receivers");
 
   if (CommandCenter.aircraft) {
     alert("You can create only one aircraft");

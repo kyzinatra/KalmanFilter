@@ -39,6 +39,11 @@ export class Vec {
     return Math.sqrt(this.vec.reduce((sum, el) => sum + el ** 2, 0));
   }
 
+  cut(length: number) {
+    this.vec.length = length;
+    return this;
+  }
+
   get coords() {
     return this.vec;
   }

@@ -24,12 +24,12 @@ body {
   width: 100%;
   justify-content: space-around;
 }
-#create-recevier,
+#create-receivers,
 #create-aircraft {
   width: 40%;
 }
 
-#create-recevier-form,
+#create-receivers-form,
 #create-aircraft-form {
   display: flex;
   flex-direction: column;

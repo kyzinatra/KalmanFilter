@@ -11,14 +11,10 @@ declare global {
   }
 }
 
-const ClosedEl = document.getElementById("closed") as HTMLElement;
 const IterationEl = document.getElementById("MLS") as HTMLElement;
-const AircraftClosedEl = document.getElementById("aircraft-closed") as HTMLElement;
 const AircraftMLSEl = document.getElementById("aircraft-MLS") as HTMLElement;
 
-const MainGraph = await new Visualize(ClosedEl, { title: "Closed solution" }).init();
 const IterationGraph = await new Visualize(IterationEl, { title: "MLS solution" }).init();
-const AircraftClosedGraph = await new Visualize(AircraftClosedEl, { title: "|aircraft - closed|" }).init();
 const AircraftMLSGraph = await new Visualize(AircraftMLSEl, { title: "|aircraft - MLS|" }).init();
 
 export async function startDetection(CommandCenter: Navigation) {
@@ -27,13 +23,11 @@ export async function startDetection(CommandCenter: Navigation) {
   CommandCenter.aircraft?.start();
   await CommandCenter.initCheck();
 
-  const [closed, MLS] = CommandCenter.findCoords();
+  const MLS = CommandCenter.findCoords();
 
-  MainGraph.addTrace(getGraphSettings(closed));
   IterationGraph.addTrace(getGraphSettings(MLS));
 
   const posDiffVec = new Vec(0, 0);
-  AircraftClosedGraph.addTrace(get2DGraphSettings(posDiffVec));
   AircraftMLSGraph.addTrace(get2DGraphSettings(posDiffVec));
 
   CommandCenter.aircraft?.move();
@@ -45,16 +39,10 @@ async function detection(_time: number, CommandCenter: Navigation) {
   CommandCenter.aircraft?.move();
 
   await CommandCenter.initCheck();
-  const [closed, MLS] = CommandCenter.findCoords();
-  if (closed) {
-    MainGraph.extendsTraceByVec(closed);
-    IterationGraph.extendsTraceByVec(MLS);
+  const MLS = CommandCenter.findCoords();
 
-    AircraftClosedGraph.extendsTraceByVec(new Vec(getNow(), CommandCenter.aircraft?.getPositionDiff(closed) || 0), true);
-    AircraftMLSGraph.extendsTraceByVec(new Vec(getNow(), CommandCenter.aircraft?.getPositionDiff(MLS) || 0), true);
-  } else {
-    console.warn("There is no solution ", closed, MLS);
-  }
+  IterationGraph.extendsTraceByVec(MLS);
+  AircraftMLSGraph.extendsTraceByVec(new Vec(getNow(), CommandCenter.aircraft?.getPositionDiff(MLS) || 0), true);
 
   //? synthetic constraint
   setTimeout(() => window.isDetected && requestAnimationFrame(t => detection(t, CommandCenter)), TIME_TO_DETECT);
@@ -66,6 +54,5 @@ export function stopDetection(CommandCenter: Navigation) {
 }
 
 export function clearDetectionGraphs() {
-  MainGraph.clear(0);
   IterationGraph.clear(0);
 }

@@ -1,4 +1,5 @@
 import { E, LIGHT_SPEED } from "../../constants/physic";
+import { TTDOAMeasurement } from "../../types/navigation";
 import { Receiver } from "../Receiver";
 import { Matrix } from "./Matrix";
 import { Vec } from "./Vector";
@@ -7,13 +8,13 @@ function TtoR(t: number) {
   return t * LIGHT_SPEED;
 }
 
-export class coordsCalc {
+export class CoordsCalc {
   constructor() {}
 
   getClosedSolution(mes: Receiver[]) {
     if (mes.length !== 4) {
       if (mes.length < 4) {
-        alert("You must create at least five receviers");
+        alert("You must create at least five receivers");
         return [];
       }
 
@@ -52,32 +53,31 @@ export class coordsCalc {
     return [[d.mul(lambda1).add(e), d.mul(lambda2).add(e)]];
   }
 
-  getIterativeSolutionByMLS(measurements: Receiver[], approx: Vec) {
-    function dmCalc(approxPos: number[], recevierPos: number[]) {
-      return (
-        Math.sqrt(
-          (recevierPos[0] - approxPos[0]) ** 2 +
-            (recevierPos[1] - approxPos[1]) ** 2 +
-            (recevierPos[2] - approxPos[2]) ** 2
-        ) + approxPos[3]
-      );
-    }
+  getIterativeSolutionByMLS(measurements: TTDOAMeasurement[], approx: Vec) {
+    const A = new Matrix(measurements.length, 3);
 
-    const A = new Matrix(measurements.length, 4);
+    const coords = approx.coords;
+    const rCalc = (x: number, y: number, z: number) =>
+      Math.sqrt((x - coords[0]) ** 2 + (y - coords[1]) ** 2 + (z - coords[2]) ** 2);
 
     A.fill((i, j) => {
-      const m_i = measurements[i].pos;
-      const x_a = approx.coords;
-      const d_i = Math.sqrt((m_i[0] - x_a[0]) ** 2 + (m_i[1] - x_a[1]) ** 2 + (m_i[2] - x_a[2]) ** 2);
-      if (j === 3) return 1;
-      return (x_a[j] - m_i[j]) / d_i;
+      const receivers = measurements[i].receivers;
+      const r_i = rCalc(receivers[0][0], receivers[0][1], receivers[0][2]);
+      const r_j = rCalc(receivers[1][0], receivers[1][1], receivers[1][2]);
+      return (receivers[1][j] - coords[j]) / r_j - (receivers[0][j] - coords[j]) / r_i;
     });
 
-    //? subtract the real measurements by the measurements derived from the approximate solution m(x_a)
+    function dmCalc(receiversPos: number[][]) {
+      return (
+        rCalc(receiversPos[0][0], receiversPos[0][1], receiversPos[0][2]) -
+        rCalc(receiversPos[1][0], receiversPos[1][1], receiversPos[1][2])
+      );
+    }
+    // ? subtract the real measurements by the measurements derived from the approximate solution m(x_a)
     const dm = new Vec(
       ...Array.from(
         { length: measurements.length },
-        (_el, i) => TtoR(measurements[i].signals[0]) - dmCalc(approx.coords, measurements[i].pos)
+        (_el, i) => TtoR(measurements[i].TDOA) - dmCalc(measurements[i].receivers)
       )
     );
 

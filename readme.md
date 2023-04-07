@@ -1,6 +1,6 @@
 # Kalman Filter
 
-This is a project that demonstrates the use of a Kalman filter for estimating the position of a aircraft navigating through three receviers. The data is visualized using TypeScript and PlotyJs.
+This is a project that demonstrates the use of a Kalman filter for estimating the position of a aircraft navigating through three receivers. The data is visualized using TypeScript and PlotyJs.
 
 ## Installation
 
@@ -29,16 +29,16 @@ This will start the development server, and you can access the project by openin
 
 ## Brief Codebase Information
 
-The `src/models` folder contains classes of physical models. So the navigation class is responsible for the join to work of the aircraft and receviers. It stores instances of all receviers and the aircraft. It also creates them and initializes the sending of signals to the receviers by the initCheck method. After the calculation of positions occurs in the findCoord method. The closed solution is calculated and another solution is iteratively calculated using the least squares method, which relies on the closed solution 1 time, and then uses its previous solutions. After the solution is returned to be displayed on the screen.
+The `src/models` folder contains classes of physical models. So the navigation class is responsible for the join to work of the aircraft and receivers. It stores instances of all receivers and the aircraft. It also creates them and initializes the sending of signals to the receivers by the initCheck method. After the calculation of positions occurs in the findCoord method. The closed solution is calculated and another solution is iteratively calculated using the least squares method, which relies on the closed solution 1 time, and then uses its previous solutions. After the solution is returned to be displayed on the screen.
 
 All utility classes for rendering and calculations are located in `src/models/utils`. The main CoordsCalc class computes the solutions discussed earlier. It also stores the implementation of the matrix and vector.
-Start tracking is in `src/utils/startDetection`. The detection function initializes the distribution of signals to receviers and then starts the calculation of coordinates and draws the result. It also runs the `Aircraft.move()` function to move the aircraft through space.
+Start tracking is in `src/utils/startDetection`. The detection function initializes the distribution of signals to receivers and then starts the calculation of coordinates and draws the result. It also runs the `Aircraft.move()` function to move the aircraft through space.
 
-By default, 6 receviers and a aircraft are drawn. You can clear all graphs by clicking the clear button. All other files are needed for the UI and are not directly involved in the modeling. In the main upper part there are 3 graphs that represent the real position of the aircraft. Its calculation using a closed solution, that is, not an iterative solution, and the last one, for a solution using the least squares method. That is an iterative solution. Below is a graph of the initial location of the vessel and towers.
+By default, 6 receivers and a aircraft are drawn. You can clear all graphs by clicking the clear button. All other files are needed for the UI and are not directly involved in the modeling. In the main upper part there are 3 graphs that represent the real position of the aircraft. Its calculation using a closed solution, that is, not an iterative solution, and the last one, for a solution using the least squares method. That is an iterative solution. Below is a graph of the initial location of the vessel and towers.
 
 ## Signal generation
 
-To freely receive and process signals, I created a `Navigation` class that creates, stores and uses all instances of the `Aircraft` and `Beacon` classes. This class implements the `initCheck()` method to send a signal from the aircraft to receviers. To do this, there is a `getLightDelay()` method on the aircraft, which returns the delay that is necessary for the light to go from the aircraft to the lighthouse. After this time is added to the current time and sent to receviers. After this moment, nowhere else possible to find out the time it took the signal to reach the receviers. In the `findCord()` method (which will be discussed later), we only have the exact position of each recevier and TOA (Time of signal arrival). We need to calculate TOE (time of signal emission) and get.
+To freely receive and process signals, I created a `Navigation` class that creates, stores and uses all instances of the `Aircraft` and `Beacon` classes. This class implements the `initCheck()` method to send a signal from the aircraft to receivers. To do this, there is a `getLightDelay()` method on the aircraft, which returns the delay that is necessary for the light to go from the aircraft to the lighthouse. After this time is added to the current time and sent to receivers. After this moment, nowhere else possible to find out the time it took the signal to reach the receivers. In the `findCord()` method (which will be discussed later), we only have the exact position of each receivers and TOA (Time of signal arrival). We need to calculate TOE (time of signal emission) and get.
 
 `findCord()` method simply run all methods from `CoordsCalc` class and return result to the main process, which print it on the screen in `src/utils/detection.ts`.
 

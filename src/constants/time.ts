@@ -1,2 +1,2 @@
-export const TIME_TO_DETECT = 0; // ms
-export const TIMES_TO_MLS = 5;
+export const TIME_TO_DETECT = 200; // ms
+export const TIMES_TO_MLS = 10;
