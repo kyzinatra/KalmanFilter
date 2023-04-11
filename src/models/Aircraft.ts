@@ -9,7 +9,7 @@ export class Aircraft {
   dt: number = 0;
   private aircraftGraph: Visualize | null = null;
 
-  constructor(private pos: Vec, private velocity: Vec = new Vec(10, 10, 10)) {
+  constructor(private pos: Vec, private velocity: Vec = new Vec(10, 10, 0)) {
     this.id = uuid();
     new Visualize(document.getElementById("aircraft") as HTMLElement, { title: "Real Position" }).init().then(res => {
       this.aircraftGraph = res;
