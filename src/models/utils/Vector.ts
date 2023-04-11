@@ -5,6 +5,11 @@ export class Vec {
     this.vec = vec;
   }
 
+  reverse() {
+    const coords = [...this.coords];
+    this.fill(i => coords[coords.length - 1 - i]);
+    return this;
+  }
   add(vec2: Vec) {
     if (this.vec.length !== vec2.coords.length) throw new RangeError("You can only add equally sized vectors");
     return new Vec(...this.vec.map((c, i) => c + vec2.coords[i]));

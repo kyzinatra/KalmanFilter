@@ -17,7 +17,6 @@ const BuildingsGraph = await new Visualize(BuildingsGraphEl).init();
 
 export async function Init() {
   const CommandCenter = new Navigation();
-
   receiversForm.addEventListener("submit", e => {
     e.preventDefault();
     receiversHandler(new Vec(+receiversX.value, +receiversY.value, +receiversZ.value), CommandCenter);
@@ -44,7 +43,7 @@ export async function Init() {
     );
   }
 
-  const aircraftVec = new Vec(Math.random() * 100, Math.random() * 100, Math.random() * 100);
+  const aircraftVec = new Vec(13.07, 44.5, 46.9);
   aircraftHandler(aircraftVec, CommandCenter);
 }
 

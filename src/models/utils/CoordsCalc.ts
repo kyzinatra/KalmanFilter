@@ -30,6 +30,8 @@ export class CoordsCalc {
       return results;
     }
 
+    // calculations
+
     const A = new Matrix(4, 4);
     A.fill((i, j) => {
       if (j <= 2) {
@@ -38,7 +40,7 @@ export class CoordsCalc {
       return -TtoR(mes[i].signals?.[0] || 0);
     });
 
-    const s_i = mes.map(bcn => new Vec(...[...bcn.pos, TtoR(bcn.signals[0])]));
+    const s_i: Vec[] = mes.map(bcn => new Vec(...[...bcn.pos, TtoR(bcn.signals[0])]));
     const b = new Vec(...s_i.map(s => s.lorentzianProduct(s)));
     const invA = A.inv();
     const d = invA.vecMul(new Vec(1, 1, 1, 1)).mul(0.5);
@@ -82,7 +84,12 @@ export class CoordsCalc {
     );
 
     const A_T = A.transpose();
-    const AdjustmentSolution = approx.add(A_T.mtxMul(A).inv().mtxMul(A_T).vecMul(dm));
+    const BVec = A_T.vecMul(dm); // b
+    const MatrixDecomposition = A_T.mtxMul(A).choleskyDecomposition(); // L^TL = A
+    const solutionY = MatrixDecomposition.solveTriangularSystem(BVec); // y = L^-1b
+    const solution = MatrixDecomposition.transpose().solveTriangularSystem(solutionY); // x = (L^T)^-1y
+
+    const AdjustmentSolution = approx.add(solution);
 
     return AdjustmentSolution;
   }

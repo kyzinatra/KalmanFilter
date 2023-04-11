@@ -1,5 +1,10 @@
 import { Vec } from "./Vector";
 
+type TBorders = [
+  [number, (i: number) => boolean, (i: number) => number],
+  [number, (i: number, j: number) => boolean, (i: number) => number]
+];
+
 /** @description n*m (n rows and m columns) */
 export class Matrix {
   private _mtx: number[][] = [];
@@ -59,10 +64,10 @@ export class Matrix {
 
   /** @description Matrix inverse O(n^3) */
   inv() {
-    if (this.n !== this.m || this.det === 0)
-      throw new Error("For non-square matrices and degenerate matrices there are no inverse matrices");
+    if (this.rowsLength !== this.columnLength)
+      throw new Error("For non-square matrices matrices there are no inverse matrices");
 
-    const Mtx = this.extendWithIdentity().toRightTriangular();
+    const Mtx = this.extendWithIdentity().toUpperTriangular();
     const inverse = new Matrix(this.rowsLength, this.columnLength);
 
     for (let i = this.rowsLength - 1; i >= 0; i--) {
@@ -104,7 +109,7 @@ export class Matrix {
     return newMtx;
   }
 
-  toRightTriangular(): Matrix {
+  toUpperTriangular(): Matrix {
     const result = this.copy();
     for (let i = 0; i < result.rowsLength; i++) {
       if (result.get(i, i) === 0) {
@@ -152,7 +157,35 @@ export class Matrix {
   }
 
   //  inverse symmetric matrix
-  choleskyDecomposition() {}
+  choleskyDecomposition() {
+    const res = new Matrix(this.rowsLength, this.columnLength);
+    res.fill((j, i) => {
+      if (j < i) return 0;
+      if (i === 0 && j === 0) {
+        return Math.sqrt(this.get(0, 0));
+      }
+
+      if (i === 0) {
+        return this.get(j, i) / res.get(0, 0);
+      }
+
+      if (i === j) {
+        let sum = 0;
+
+        for (let p = 0; p < i; p++) {
+          sum += res.get(i, p) ** 2;
+        }
+        return Math.sqrt(this.get(i, i) - sum);
+      }
+
+      let sum = 0;
+      for (let p = 0; p < i; p++) {
+        sum += res.get(i, p) * res.get(j, p);
+      }
+      return (1 / res.get(i, i)) * (this.get(j, i) - sum);
+    });
+    return res;
+  }
 
   get rowsLength() {
     return this.n;
@@ -162,11 +195,49 @@ export class Matrix {
   }
   /** @description Matrix determinant O(n^3) */
   get det(): number {
-    const RTMtx = this.toRightTriangular();
+    const RTMtx = this.toUpperTriangular();
     let det = RTMtx.get(0, 0);
     for (let i = 1; i < RTMtx.rowsLength; i++) {
       det *= RTMtx.get(i, i);
     }
     return det;
+  }
+
+  solveTriangularSystem(b: Vec) {
+    if (b.coords.length !== this.rowsLength)
+      // Ax = b, A - leftTriangular
+      throw new Error("b vector must be the same size as the matrix");
+
+    // Define cycle borders. Depends on matrix type (Lower triangular or Upper triangular)
+    let borders: TBorders = [
+      [0, (i: number) => i < this.rowsLength, (i: number) => ++i],
+      [0, (i: number, j: number) => j <= i, (i: number) => ++i],
+    ];
+    if (this.get(this.columnLength - 1, 0) === 0) {
+      borders = [
+        [this.rowsLength - 1, (i: number) => i >= 0, (i: number) => --i],
+        [this.columnLength - 1, (_: number, j: number) => j >= 0, (i: number) => --i],
+      ];
+    }
+
+    const x = new Vec();
+    for (let i = borders[0][0]; borders[0][1](i); i = borders[0][2](i)) {
+      const xCoords = x.coords;
+      let solution = b.coords[i];
+      for (let j = borders[1][0]; borders[1][1](i, j); j = borders[1][2](j)) {
+        if (xCoords[j] !== undefined) {
+          solution -= xCoords[j] * this.get(i, j);
+          continue;
+        }
+        if (this.get(i, j) === 0) {
+          x.set(j, 0);
+          continue;
+        }
+
+        x.set(j, solution / this.get(i, j));
+        break;
+      }
+    }
+    return x;
   }
 }
