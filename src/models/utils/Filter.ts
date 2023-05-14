@@ -1,16 +1,13 @@
 import { Matrix } from "./Matrix";
 import { Vec } from "./Vector";
 
-export function getXMtx(dt: number) {}
+export function getXMtx(_dt: number) {}
 
 export class KalmanFilter {
-	private _positions: Vec[] = [];
+	// private _positions: Vec[] = [];
 	constructor(private _State: Vec | Matrix, private _Covariance: Matrix) {}
 
-	private calcState(X: Matrix) {
-		const { Covariance } = this;
-		// const K = Covariance.mtxMul(X.transpose()).mtxMul(X.mtxMul(Covariance.mtxMul(X.transpose())));
-	}
+	// private calcState(X: Matrix) {}
 
 	get Covariance() {
 		return this._Covariance;
