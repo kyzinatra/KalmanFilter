@@ -13,6 +13,7 @@ import {
 	getRMatrix,
 } from "../utils/kalmanMatrices";
 import { Sigma } from "../constants/kalmanFilter";
+import { Matrix } from "./utils/Matrix";
 
 export class Navigation {
 	private _receivers: Receiver[] = [];
@@ -26,9 +27,9 @@ export class Navigation {
 
 	constructor() {
 		this.KalmanFilter = new KalmanFilter({
-			F: getFMatrix(0),
+			F: getFMatrix(0, new Matrix(9, 9)),
 			H: getHMatrix(),
-			Q: getQMatrix(0, Sigma),
+			Q: getQMatrix(0, Sigma, new Matrix(9, 9)),
 			R: getRMatrix(Sigma),
 			P: getPMatrix(Sigma),
 			x: new Vec(0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -116,9 +117,8 @@ export class Navigation {
 
 	filter(z: Vec) {
 		console.log(this.lastCheckTime, this.pathHistory.at(-1));
-		this.KalmanFilter.FMatrix = getFMatrix(this.deltaTime);
-		this.KalmanFilter.QMatrix = getQMatrix(this.deltaTime, Sigma);
-		this.KalmanFilter.HMatrix = getHMatrix();
+		this.KalmanFilter.FMatrix = getFMatrix(this.deltaTime, this.KalmanFilter.FMatrix);
+		this.KalmanFilter.QMatrix = getQMatrix(this.deltaTime, Sigma, this.KalmanFilter.QMatrix);
 
 		const result = this.KalmanFilter.update(z);
 		return result;

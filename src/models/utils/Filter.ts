@@ -81,6 +81,10 @@ export class KalmanFilter {
 		this.Q = Q;
 	}
 
+	get QMatrix() {
+		return this.Q;
+	}
+
 	set RMatrix(R: Matrix) {
 		this.R = R;
 	}
@@ -91,5 +95,9 @@ export class KalmanFilter {
 
 	set FMatrix(F: Matrix) {
 		this.F = F;
+	}
+
+	get FMatrix() {
+		return this.F;
 	}
 }

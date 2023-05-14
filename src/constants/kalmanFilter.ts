@@ -1,1 +1,1 @@
-export const Sigma = 750;
+export const Sigma = 75;
