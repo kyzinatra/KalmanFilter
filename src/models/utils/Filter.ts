@@ -29,10 +29,6 @@ export class KalmanFilter {
 		this.x = settings.x;
 	}
 
-	/**
-	 * @description Predicts the state and covariance of the next step
-	 * @see https://en.wikipedia.org/wiki/Kalman_filter#:~:text=29%5D%5B30%5D-,Predict,-%5Bedit%5D
-	 */
 	public update(z: Vec) {
 		const { F, H, Q, R, P, x } = this;
 
@@ -54,8 +50,6 @@ export class KalmanFilter {
 
 		// Posteriori estimate covariance
 		const PEst = PPred.sub(K.mtxMul(H).mtxMul(PPred));
-
-		// TODO add stable PEst matrix
 
 		this.x = xEst;
 		this.P = PEst;
