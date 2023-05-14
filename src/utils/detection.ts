@@ -6,10 +6,12 @@ import { get2DGraphSettings, getGraphSettings } from "./getSettings";
 import { getNow } from "./time";
 
 declare global {
-  interface Window {
-    isDetected: boolean;
-  }
+	interface Window {
+		isDetected: boolean;
+	}
 }
+
+let i = 0;
 
 const IterationEl = document.getElementById("MLS") as HTMLElement;
 const AircraftMLSEl = document.getElementById("aircraft-MLS") as HTMLElement;
@@ -18,41 +20,51 @@ const IterationGraph = await new Visualize(IterationEl, { title: "MLS solution" 
 const AircraftMLSGraph = await new Visualize(AircraftMLSEl, { title: "|aircraft - MLS|" }).init();
 
 export async function startDetection(CommandCenter: Navigation) {
-  if (window.isDetected) return;
-  window.isDetected = true;
-  CommandCenter.aircraft?.start();
-  await CommandCenter.initCheck();
+	if (window.isDetected) return;
+	window.isDetected = true;
+	CommandCenter.startAircraft();
+	await CommandCenter.initCheck();
 
-  const MLS = CommandCenter.findCoords();
+	const MLS = CommandCenter.findCoords();
 
-  IterationGraph.addTrace(getGraphSettings(MLS));
+	IterationGraph.addTrace(getGraphSettings(MLS));
 
-  const posDiffVec = new Vec(0, 0);
-  AircraftMLSGraph.addTrace(get2DGraphSettings(posDiffVec));
+	const posDiffVec = new Vec(0, 0);
+	AircraftMLSGraph.addTrace(get2DGraphSettings(posDiffVec));
 
-  CommandCenter.aircraft?.move();
-
-  detection(0, CommandCenter);
+	setTimeout(
+		() => window.isDetected && requestAnimationFrame((t) => detection(0, CommandCenter)),
+		TIME_TO_DETECT
+	);
 }
 
+// This
 async function detection(_time: number, CommandCenter: Navigation) {
-  CommandCenter.aircraft?.move();
+	i++;
 
-  await CommandCenter.initCheck();
-  const MLS = CommandCenter.findCoords();
+	await CommandCenter.initCheck();
+	const MLS = CommandCenter.findCoords();
 
-  IterationGraph.extendsTraceByVec(MLS);
-  AircraftMLSGraph.extendsTraceByVec(new Vec(getNow(), CommandCenter.aircraft?.getPositionDiff(MLS) || 0), true);
+	IterationGraph.extendsTraceByVec(MLS);
+	AircraftMLSGraph.extendsTraceByVec(
+		new Vec(getNow(), CommandCenter.aircraft?.getPositionDiff(MLS) || 0),
+		true
+	);
 
-  //? synthetic constraint
-  setTimeout(() => window.isDetected && requestAnimationFrame(t => detection(t, CommandCenter)), TIME_TO_DETECT);
+	if (i % 100 === 0) console.log(i);
+
+	//? synthetic constraint
+	if (i > 1700) return CommandCenter.testFilter();
+	setTimeout(
+		() => window.isDetected && requestAnimationFrame((t) => detection(t, CommandCenter)),
+		TIME_TO_DETECT
+	);
 }
 
-export function stopDetection(CommandCenter: Navigation) {
-  CommandCenter.aircraft?.stop();
-  window.isDetected = false;
+export function stopDetection() {
+	window.isDetected = false;
 }
 
 export function clearDetectionGraphs() {
-  IterationGraph.clear(0);
+	IterationGraph.clear(0);
 }

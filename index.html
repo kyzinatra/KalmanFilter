@@ -1,48 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/src/style/index.css" />
-    <script type="module" src="/src/main.ts" defer></script>
-    <link rel="shortcut icon" href="icon.png" type="image/png" />
-    <title>Aircraft MLAT</title>
-  </head>
-  <body>
-    <div class="subst__graphs">
-      <div style="height: 500px; width: 100%" id="aircraft-MLS"></div>
-    </div>
-    <div class="main__graphs">
-      <div style="height: 700px; width: 50%" id="aircraft"></div>
-      <div style="height: 700px; width: 50%" id="MLS"></div>
-    </div>
+<html lang="en-US">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="/src/style/index.css" />
+		<script type="module" src="/src/main.ts" defer></script>
+		<link rel="shortcut icon" href="icon.png" type="image/png" />
+		<title>Aircraft MLAT</title>
+	</head>
+	<body>
+		<div class="subst__graphs">
+			<div style="height: 500px; width: 100%" id="aircraft-MLS"></div>
+		</div>
+		<div class="main__graphs">
+			<div style="height: 700px; width: 50%" id="aircraft"></div>
+			<div style="height: 700px; width: 50%" id="MLS"></div>
+		</div>
 
-    <div id="signal-controls">
-      <button id="signal-start" class="btn">Start position detection</button>
-      <button id="signal-stop" class="btn">Stop position detection</button>
-    </div>
+		<div id="signal-controls">
+			<button id="signal-start" class="btn">Start position detection</button>
+			<button id="signal-stop" class="btn">Stop position detection</button>
+		</div>
 
-    <div class="forms">
-      <div id="create-aircraft">
-        <form id="create-aircraft-form">
-          <input type="number" required placeholder="x" class="inpt" />
-          <input type="number" required placeholder="y" class="inpt" />
-          <input type="number" required placeholder="z" class="inpt" />
-          <button type="submit" class="btn">Create aircraft</button>
-        </form>
-      </div>
-      <div id="create-receivers">
-        <form id="create-receivers-form">
-          <input type="number" required placeholder="x" class="inpt" />
-          <input type="number" required placeholder="y" class="inpt" />
-          <input type="number" required placeholder="z" class="inpt" />
-          <button type="submit" class="btn">Create receivers</button>
-        </form>
-      </div>
-    </div>
+		<div class="forms">
+			<div id="create-aircraft">
+				<form id="create-aircraft-form">
+					<input type="number" required placeholder="x" class="inpt" />
+					<input type="number" required placeholder="y" class="inpt" />
+					<input type="number" required placeholder="z" class="inpt" />
+					<button type="submit" class="btn">Create aircraft</button>
+				</form>
+			</div>
+			<div id="create-receivers">
+				<form id="create-receivers-form">
+					<input type="number" required placeholder="x" class="inpt" />
+					<input type="number" required placeholder="y" class="inpt" />
+					<input type="number" required placeholder="z" class="inpt" />
+					<button type="submit" class="btn">Create receivers</button>
+				</form>
+			</div>
+		</div>
 
-    <div class="graphs">
-      <div style="height: 500px; width: 100%" id="BuildingsGraph"></div>
-    </div>
-  </body>
+		<div class="graphs">
+			<div style="height: 500px; width: 100%" id="BuildingsGraph"></div>
+		</div>
+	</body>
 </html>

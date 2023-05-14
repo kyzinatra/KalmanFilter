@@ -8,9 +8,11 @@ type TBorders = [
 /** @description n*m (n rows and m columns) */
 export class Matrix {
 	private _mtx: number[][] = [];
-	constructor(private readonly n: number, private readonly m: number) {
+	constructor(private readonly n: number, private readonly m: number, defaultMtx?: number[][]) {
 		if (n <= 0 || m <= 0) throw new RangeError("Matrix size must be positive");
+
 		this._mtx = Array.from({ length: n }, () => Array.from({ length: m }, () => 0));
+		if (defaultMtx) this.fill((i, j) => defaultMtx[i][j] || 0);
 	}
 
 	fill(callback: (n: number, m: number, prevValue: number) => number) {
@@ -19,6 +21,7 @@ export class Matrix {
 				this._mtx[n][m] = callback(n, m, this._mtx[n][m]);
 			}
 		}
+		return this;
 	}
 
 	mul(scalar: number) {
@@ -60,6 +63,23 @@ export class Matrix {
 			return 0;
 		});
 		return result;
+	}
+
+	static GetIdentity(n: number, m: number) {
+		return new Matrix(n, m).fill((i, j) => (i === j ? 1 : 0));
+	}
+
+	add(mtx: Matrix) {
+		if (this.rowsLength !== mtx.rowsLength || this.columnLength !== mtx.columnLength)
+			throw new Error("Matrices must be the same size");
+
+		this.fill((i, j) => this.get(i, j) + mtx.get(i, j));
+		return this;
+	}
+
+	sub(mtx: Matrix) {
+		this.add(mtx.mul(-1));
+		return this;
 	}
 
 	/** @description Matrix inverse O(n^3) */

@@ -4,13 +4,42 @@ import { Aircraft } from "./Aircraft";
 import { CoordsCalc } from "./utils/CoordsCalc";
 import { Vec } from "./utils/Vector";
 import { TMeasurement, TTDOAMeasurement } from "../types/navigation";
+import { KalmanFilter } from "./utils/Filter";
+import {
+	getFMatrix,
+	getHMatrix,
+	getPMatrix,
+	getQMatrix,
+	getRMatrix,
+} from "../utils/kalmanMatrices";
+import { Sigma } from "../constants/kalmanFilter";
 
 export class Navigation {
 	private _receivers: Receiver[] = [];
 	private _aircraft: Aircraft | null = null;
 	private pathHistory: Vec[] = [];
+	private KalmanFilter: KalmanFilter;
 
-	constructor() {}
+	private lastCheckTime: number = 0;
+	private deltaTime: number = 0;
+	private startTime: number = 0;
+
+	constructor() {
+		this.KalmanFilter = new KalmanFilter({
+			F: getFMatrix(0),
+			H: getHMatrix(0),
+			Q: getQMatrix(0, Sigma),
+			R: getRMatrix(Sigma),
+			P: getPMatrix(Sigma),
+			x: new Vec(0, 0, 0, 0, 0, 0, 0, 0, 0),
+		});
+	}
+
+	testFilter() {
+		console.table(this.KalmanFilter.history.at(-3));
+		console.table(this.KalmanFilter.history.at(-2));
+		console.table(this.KalmanFilter.history.at(-1));
+	}
 
 	createReceiver(pos: Vec) {
 		if (!this._receivers) this._receivers = [];
@@ -26,15 +55,21 @@ export class Navigation {
 	async initCheck() {
 		if (!this._aircraft || !this._receivers)
 			throw new Error("No receivers or aircraft on the field");
+
+		const dateNow = performance.now() / 1000;
+		this.deltaTime = dateNow - this.startTime - this.lastCheckTime;
+		this.lastCheckTime = dateNow - this.startTime;
+
+		this.aircraft?.move(this.deltaTime);
 		//? Model limitations. We do not simulate the flight of light and get just delay
 		const delays = this._receivers.map(
 			(bcn) => this._aircraft?.getLightDelay(new Vec(...bcn.pos)) || 0
 		);
-		const dateNow = performance.now() / 100;
+
 		delays.forEach((del, i) => {
 			//? Just as if the package from the receivers was sent to the aircraft, and all the clocks on the receivers are synchronized
 			//? ms/1000 = s
-			this._receivers?.[i].acceptSignal(dateNow / 1000 + del);
+			this._receivers?.[i].acceptSignal(dateNow / 100 + del);
 		});
 	}
 
@@ -77,16 +112,34 @@ export class Navigation {
 
 		this._receivers.forEach((b) => b.clear());
 
-		this.pathHistory.push(MLSResult);
+		this.pushHistory(MLSResult);
 		return MLSResult;
 	}
 
+	filter(z: Vec) {
+		console.log(this.lastCheckTime, this.pathHistory.at(-1));
+		this.KalmanFilter.FMatrix = getFMatrix(this.lastCheckTime);
+		this.KalmanFilter.QMatrix = getQMatrix(this.deltaTime, Sigma);
+		this.KalmanFilter.HMatrix = getHMatrix(this.lastCheckTime);
+
+		const result = this.KalmanFilter.update(z);
+		return result;
+	}
+
+	startAircraft() {
+		this.startTime = performance.now() / 1000;
+	}
 	clear() {
 		this._aircraft?.clearGraph();
 		this._aircraft = null;
 		this._receivers = [];
 	}
 
+	pushHistory(point: Vec) {
+		const result = point.cut(3);
+		this.pathHistory.push(result);
+		this.filter(result);
+	}
 	get aircraft() {
 		return this._aircraft;
 	}
