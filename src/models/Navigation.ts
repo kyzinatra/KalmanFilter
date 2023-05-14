@@ -116,7 +116,6 @@ export class Navigation {
 	}
 
 	filter(z: Vec) {
-		console.log(this.lastCheckTime, this.pathHistory.at(-1));
 		this.KalmanFilter.FMatrix = getFMatrix(this.deltaTime, this.KalmanFilter.FMatrix);
 		this.KalmanFilter.QMatrix = getQMatrix(this.deltaTime, Sigma, this.KalmanFilter.QMatrix);
 

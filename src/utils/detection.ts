@@ -11,8 +11,6 @@ declare global {
 	}
 }
 
-let i = 0;
-
 const IterationEl = document.getElementById("MLS") as HTMLElement;
 const AircraftMLSEl = document.getElementById("aircraft-MLS") as HTMLElement;
 const KalmanEl = document.getElementById("Kalman") as HTMLElement;
@@ -44,8 +42,6 @@ export async function startDetection(CommandCenter: Navigation) {
 
 // This
 async function detection(_time: number, CommandCenter: Navigation) {
-	i++;
-
 	await CommandCenter.initCheck();
 	const MLS = CommandCenter.findCoords();
 
@@ -61,10 +57,7 @@ async function detection(_time: number, CommandCenter: Navigation) {
 		true
 	);
 
-	if (i % 100 === 0) console.log(i);
-
 	//? synthetic constraint
-	if (i > 1700) return;
 	setTimeout(
 		() => window.isDetected && requestAnimationFrame((t) => detection(t, CommandCenter)),
 		TIME_TO_DETECT

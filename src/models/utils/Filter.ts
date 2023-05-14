@@ -62,10 +62,6 @@ export class KalmanFilter {
 
 		this._history.push(xEst);
 
-		xEst.print();
-
-		console.log("------\n-----\n");
-
 		return xEst;
 	}
 
