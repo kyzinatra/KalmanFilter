@@ -15,9 +15,13 @@ let i = 0;
 
 const IterationEl = document.getElementById("MLS") as HTMLElement;
 const AircraftMLSEl = document.getElementById("aircraft-MLS") as HTMLElement;
+const KalmanEl = document.getElementById("Kalman") as HTMLElement;
+const KalmanModEl = document.getElementById("aircraft-Kalman") as HTMLElement;
 
 const IterationGraph = await new Visualize(IterationEl, { title: "MLS solution" }).init();
 const AircraftMLSGraph = await new Visualize(AircraftMLSEl, { title: "|aircraft - MLS|" }).init();
+const KalmanGraph = await new Visualize(KalmanEl, { title: "Kalman" }).init();
+const KalmanModGraph = await new Visualize(KalmanModEl, { title: "|aircraft - Kalman|" }).init();
 
 export async function startDetection(CommandCenter: Navigation) {
 	if (window.isDetected) return;
@@ -28,12 +32,12 @@ export async function startDetection(CommandCenter: Navigation) {
 	const MLS = CommandCenter.findCoords();
 
 	IterationGraph.addTrace(getGraphSettings(MLS));
-
-	const posDiffVec = new Vec(0, 0);
-	AircraftMLSGraph.addTrace(get2DGraphSettings(posDiffVec));
+	KalmanGraph.addTrace(getGraphSettings(CommandCenter.getLastFilterResult(), "0 0 255"));
+	KalmanModGraph.addTrace(get2DGraphSettings(new Vec(0, 0)));
+	AircraftMLSGraph.addTrace(get2DGraphSettings(new Vec(0, 0), "0 0 255"));
 
 	setTimeout(
-		() => window.isDetected && requestAnimationFrame((t) => detection(0, CommandCenter)),
+		() => window.isDetected && requestAnimationFrame((t) => detection(t, CommandCenter)),
 		TIME_TO_DETECT
 	);
 }
@@ -50,11 +54,17 @@ async function detection(_time: number, CommandCenter: Navigation) {
 		new Vec(getNow(), CommandCenter.aircraft?.getPositionDiff(MLS) || 0),
 		true
 	);
+	const filterRes = CommandCenter.getLastFilterResult();
+	KalmanGraph.extendsTraceByVec(filterRes);
+	KalmanModGraph.extendsTraceByVec(
+		new Vec(getNow(), CommandCenter.aircraft?.getPositionDiff(filterRes) || 0),
+		true
+	);
 
 	if (i % 100 === 0) console.log(i);
 
 	//? synthetic constraint
-	if (i > 1700) return CommandCenter.testFilter();
+	if (i > 1700) return;
 	setTimeout(
 		() => window.isDetected && requestAnimationFrame((t) => detection(t, CommandCenter)),
 		TIME_TO_DETECT

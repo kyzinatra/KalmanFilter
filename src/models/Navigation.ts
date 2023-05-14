@@ -27,7 +27,7 @@ export class Navigation {
 	constructor() {
 		this.KalmanFilter = new KalmanFilter({
 			F: getFMatrix(0),
-			H: getHMatrix(0),
+			H: getHMatrix(),
 			Q: getQMatrix(0, Sigma),
 			R: getRMatrix(Sigma),
 			P: getPMatrix(Sigma),
@@ -35,10 +35,8 @@ export class Navigation {
 		});
 	}
 
-	testFilter() {
-		console.table(this.KalmanFilter.history.at(-3));
-		console.table(this.KalmanFilter.history.at(-2));
-		console.table(this.KalmanFilter.history.at(-1));
+	getLastFilterResult() {
+		return this.KalmanFilter.state;
 	}
 
 	createReceiver(pos: Vec) {
@@ -118,9 +116,9 @@ export class Navigation {
 
 	filter(z: Vec) {
 		console.log(this.lastCheckTime, this.pathHistory.at(-1));
-		this.KalmanFilter.FMatrix = getFMatrix(this.lastCheckTime);
+		this.KalmanFilter.FMatrix = getFMatrix(this.deltaTime);
 		this.KalmanFilter.QMatrix = getQMatrix(this.deltaTime, Sigma);
-		this.KalmanFilter.HMatrix = getHMatrix(this.lastCheckTime);
+		this.KalmanFilter.HMatrix = getHMatrix();
 
 		const result = this.KalmanFilter.update(z);
 		return result;

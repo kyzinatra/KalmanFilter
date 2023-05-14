@@ -40,10 +40,10 @@ export function getFMatrix(t: number) {
 	]);
 }
 
-export function getHMatrix(t: number) {
+export function getHMatrix() {
 	return new Matrix(3, 9, [
-		[1, 0, 0, t, 0, 0, t ** 2 / 2, 0, 0],
-		[0, 1, 0, 0, t, 0, 0, t ** 2 / 2, 0],
-		[0, 0, 1, 0, 0, t, 0, 0, t ** 2 / 2],
+		[1, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 1, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 1, 0, 0, 0, 0, 0, 0],
 	]);
 }

@@ -36,41 +36,18 @@ export class KalmanFilter {
 	public update(z: Vec) {
 		const { F, H, Q, R, P, x } = this;
 
-		// console.log("------\n-----\n");
-		// console.log("F matrix:\n");
-		// F.print();
-		// console.log("H matrix:\n");
-		// H.print();
-
 		// Predict
-		// const xPred = F.vecMul(x);
-		// const PPred = F.mtxMul(P).mtxMul(F.transpose()).add(Q);
-		const xPred = x;
-		const PPred = P.add(Q);
-
-		// console.log("x:\n");
-		// x.print();
-		// console.log("xPred:\n");
-		// xPred.print();
-		// console.log("z:\n");
-		// z.print();
-		// console.log("Hx:\n");
-		// H.vecMul(xPred).print();
+		const xPred = F.vecMul(x);
+		const PPred = F.mtxMul(P).mtxMul(F.transpose()).add(Q);
 
 		// Update
 		// Innovation or measurement residual
 		const y = z.sub(H.vecMul(xPred));
 
-		// console.log("Y:\n");
-		// y.print();
-
 		// Kalman gain
 		const K = PPred.mtxMul(H.transpose()).mtxMul(
 			H.mtxMul(PPred).mtxMul(H.transpose()).add(R).inv()
 		);
-
-		// console.log("K:\n");
-		// K.print();
 
 		// Posteriori state estimate
 		const xEst = xPred.add(K.vecMul(y));
@@ -85,9 +62,9 @@ export class KalmanFilter {
 
 		this._history.push(xEst);
 
-		// xEst.print();
+		xEst.print();
 
-		// console.log("------\n-----\n");
+		console.log("------\n-----\n");
 
 		return xEst;
 	}
