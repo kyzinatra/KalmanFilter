@@ -1,7 +1,7 @@
 import { Navigation } from "./models/Navigation";
 import { Vec } from "./models/utils/Vector";
 import { Visualize } from "./models/utils/Visualize";
-import { startDetection, stopDetection } from "./utils/detection";
+import { detection, initDetection } from "./utils/detection";
 
 const BuildingsGraphEl = document.querySelector("#BuildingsGraph") as HTMLElement;
 
@@ -16,7 +16,9 @@ const [aircraftX, aircraftY, aircraftZ] = aircraftForm.elements as any as HTMLIn
 const BuildingsGraph = await new Visualize(BuildingsGraphEl).init();
 
 export async function Init() {
+	const isStop = { isStop: false };
 	const CommandCenter = new Navigation();
+
 	receiversForm.addEventListener("submit", (e) => {
 		e.preventDefault();
 		receiversHandler(
@@ -24,6 +26,7 @@ export async function Init() {
 			CommandCenter
 		);
 	});
+	initDetection(CommandCenter);
 
 	aircraftForm.addEventListener("submit", (e) => {
 		e.preventDefault();
@@ -31,15 +34,17 @@ export async function Init() {
 	});
 
 	signalStartBtn.addEventListener("click", () => {
-		startDetection(CommandCenter);
+		isStop.isStop = false;
+		CommandCenter.startAircraft();
+		detection(isStop, CommandCenter);
 	});
 
 	signalStopBtn.addEventListener("click", () => {
-		stopDetection();
+		isStop.isStop = true;
 	});
 
 	// TODO: Delete for manually control from UI
-	for (let i = 0; i < 8; i++) {
+	for (let i = 0; i < 12; i++) {
 		receiversHandler(
 			new Vec(
 				(Math.random() * 100_000) | 0,
@@ -50,7 +55,7 @@ export async function Init() {
 		);
 	}
 
-	const aircraftVec = new Vec(0, 0, 0);
+	const aircraftVec = new Vec(Math.random() * 100, Math.random() * 100, Math.random() * 100);
 	aircraftHandler(aircraftVec, CommandCenter);
 }
 
@@ -88,7 +93,7 @@ function receiversHandler(vector: Vec, CommandCenter: Navigation) {
 function aircraftHandler(vector: Vec, CommandCenter: Navigation) {
 	if (!CommandCenter.receivers?.length) return alert("Create at least one receivers");
 
-	if (CommandCenter.aircraft) {
+	if (CommandCenter.hasAircraft) {
 		alert("You can create only one aircraft");
 		return;
 	}

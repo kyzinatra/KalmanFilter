@@ -14,6 +14,7 @@ import {
 } from "../utils/kalmanMatrices";
 import { Sigma } from "../constants/kalmanFilter";
 import { Matrix } from "./utils/Matrix";
+import { getNow } from "../utils/time";
 
 export class Navigation {
 	private _receivers: Receiver[] = [];
@@ -51,15 +52,19 @@ export class Navigation {
 		return this._aircraft;
 	}
 
-	async initCheck() {
+	async makeCheck() {
 		if (!this._aircraft || !this._receivers)
 			throw new Error("No receivers or aircraft on the field");
 
-		const dateNow = performance.now() / 1000;
+		if (this.startTime === -1)
+			throw new Error("to determine the position, first launch the aircraft");
+
+		//? update time
+		const dateNow = getNow();
 		this.deltaTime = dateNow - this.startTime - this.lastCheckTime;
 		this.lastCheckTime = dateNow - this.startTime;
 
-		this.aircraft?.move(this.deltaTime);
+		this._aircraft.moveByDt(this.deltaTime);
 		//? Model limitations. We do not simulate the flight of light and get just delay
 		const delays = this._receivers.map(
 			(bcn) => this._aircraft?.getLightDelay(new Vec(...bcn.pos)) || 0
@@ -77,7 +82,8 @@ export class Navigation {
 		const result: TTDOAMeasurement[] = [];
 		for (let i = 0; i < measurements.length; i++) {
 			for (let j = i + 1; j < measurements.length; j++) {
-				// E(noise) == 0
+				//? E(noise) == 0
+				//? D(noie) == 75
 				const noise = (Math.random() - 0.5) / 10_000_000;
 				result.push({
 					TDOA: measurements[i].TOA - measurements[j].TOA + noise,
@@ -124,12 +130,13 @@ export class Navigation {
 	}
 
 	startAircraft() {
-		this.startTime = performance.now() / 1000;
+		this.startTime = getNow();
 	}
-	clear() {
-		this._aircraft?.clearGraph();
-		this._aircraft = null;
-		this._receivers = [];
+
+	stopAircraft() {
+		this.startTime = -1;
+		this.lastCheckTime = 0;
+		this.deltaTime = 0;
 	}
 
 	pushHistory(point: Vec) {
@@ -137,10 +144,16 @@ export class Navigation {
 		this.pathHistory.push(result);
 		this.filter(result);
 	}
-	get aircraft() {
-		return this._aircraft;
+
+	getPositionMod(vec: Vec) {
+		return this._aircraft?.getPositionMod(vec);
 	}
+
 	get receivers() {
 		return this._receivers;
+	}
+
+	get hasAircraft() {
+		return !!this._aircraft;
 	}
 }

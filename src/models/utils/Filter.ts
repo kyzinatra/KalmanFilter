@@ -18,8 +18,6 @@ export class KalmanFilter {
 	private P: Matrix;
 	private x: Vec; // State estimate
 
-	public _history: Vec[] = [];
-
 	constructor(settings: TInputData) {
 		this.F = settings.F;
 		this.H = settings.H;
@@ -54,17 +52,11 @@ export class KalmanFilter {
 		this.x = xEst;
 		this.P = PEst;
 
-		this._history.push(xEst);
-
 		return xEst;
 	}
 
 	get state() {
 		return this.x;
-	}
-
-	get history() {
-		return this._history;
 	}
 
 	set QMatrix(Q: Matrix) {

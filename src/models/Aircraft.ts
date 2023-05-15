@@ -14,11 +14,11 @@ export class Aircraft {
 			.init()
 			.then((res) => {
 				this.aircraftGraph = res;
-				res.addTrace(getGraphSettings(pos, "242 0 52", "242 0 52"));
+				res.addTrace(getGraphSettings(pos, "242 0 52"));
 			});
 	}
 
-	move(dt: number) {
+	moveByDt(dt: number) {
 		this.pos = this.pos.add(this.velocity.mul(dt));
 		this.velocity = this.velocity.add(new Vec(0, 0, 1).mul(dt));
 		this.drawGraph();
@@ -28,16 +28,12 @@ export class Aircraft {
 		this.aircraftGraph?.extendsTraceByVec(this.pos);
 	}
 
-	clearGraph() {
-		this.aircraftGraph?.clear(0);
-	}
-
 	/** @description get the time in seconds it takes light to reach the aircraft */
 	getLightDelay(fromPos: Vec): number {
 		return this.pos.sub(fromPos).mod / LIGHT_SPEED;
 	}
 
-	getPositionDiff(fromPos: Vec): number {
+	getPositionMod(fromPos: Vec): number {
 		return this.pos.sub(new Vec(...fromPos.coords.slice(0, 3))).mod;
 	}
 }
