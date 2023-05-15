@@ -56,7 +56,7 @@ export async function Init() {
 		);
 	}
 
-	const aircraftVec = new Vec(Math.random() * 10, Math.random() * 10, Math.random() * 10);
+	const aircraftVec = new Vec(Math.random(), Math.random(), Math.random());
 	aircraftHandler(aircraftVec, CommandCenter);
 }
 

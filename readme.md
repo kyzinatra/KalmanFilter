@@ -115,6 +115,8 @@ $\vec{x} = \vec{x_a} + d\vec{x}$
 
 4. Repeat from step 1, but replacing $\vec{x_a}$ by the $\vec{x}$
 
+### Kalman Filter
+
 ## Source
 
 1. [Elaboration of Methods and Algorithms for Passive Aircraft and Vehicle Detection over Time of Signal Arrival Differences](https://diglib.tugraz.at/download.php?id=576a75430e75f&location=browse)
