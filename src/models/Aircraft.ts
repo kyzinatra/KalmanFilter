@@ -8,7 +8,7 @@ export class Aircraft {
 	id: string;
 	private aircraftGraph: Visualize | null = null;
 
-	constructor(private pos: Vec, private velocity: Vec = new Vec(10, 10, 0)) {
+	constructor(private pos: Vec, private velocity: Vec = new Vec(130, 150, 0)) {
 		this.id = uuid();
 		new Visualize(document.getElementById("aircraft") as HTMLElement, { title: "Real Position" })
 			.init()
@@ -20,7 +20,7 @@ export class Aircraft {
 
 	moveByDt(dt: number) {
 		this.pos = this.pos.add(this.velocity.mul(dt));
-		this.velocity = this.velocity.add(new Vec(0, 0, 1).mul(dt));
+		this.velocity = this.velocity.add(new Vec(0.5, 0.1, 1).mul(dt));
 		this.drawGraph();
 	}
 

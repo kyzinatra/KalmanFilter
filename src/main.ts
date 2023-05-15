@@ -16,7 +16,7 @@ const [aircraftX, aircraftY, aircraftZ] = aircraftForm.elements as any as HTMLIn
 const BuildingsGraph = await new Visualize(BuildingsGraphEl).init();
 
 export async function Init() {
-	const isStop = { isStop: false };
+	const isStop = { isStop: true };
 	const CommandCenter = new Navigation();
 
 	receiversForm.addEventListener("submit", (e) => {
@@ -34,6 +34,7 @@ export async function Init() {
 	});
 
 	signalStartBtn.addEventListener("click", () => {
+		if (isStop.isStop === false) return;
 		isStop.isStop = false;
 		CommandCenter.startAircraft();
 		detection(isStop, CommandCenter);
