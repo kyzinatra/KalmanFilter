@@ -84,7 +84,7 @@ export class Navigation {
 			for (let j = i + 1; j < measurements.length; j++) {
 				//? E(noise) == 0
 				//? D(noie) == 75
-				const noise = (Math.random() - 0.5) / 10_000_000;
+				const noise = (Math.random() - 0.5) / 8_000_000;
 				result.push({
 					TDOA: measurements[i].TOA - measurements[j].TOA + noise,
 					receivers: [measurements[i].receiver, measurements[j].receiver],
