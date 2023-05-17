@@ -40,7 +40,7 @@ export class KalmanFilter {
 
 		// Kalman gain
 		const K = PPred.mtxMul(H.transpose()).mtxMul(
-			H.mtxMul(PPred).mtxMul(H.transpose()).add(R).inv()
+			H.mtxMul(PPred).mtxMul(H.transpose()).add(R).inverseDiagonal()
 		);
 
 		// Posteriori state estimate

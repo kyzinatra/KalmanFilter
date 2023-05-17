@@ -82,6 +82,15 @@ export class Matrix {
 		return this;
 	}
 
+	inverseDiagonal() {
+		if (this.rowsLength !== this.columnLength)
+			throw new Error("For non-square matrices matrices there are no inverse matrices");
+		for (let i = 0; i < this.rowsLength; i++) {
+			this.set(i, i, 1 / this.get(i, i));
+		}
+		return this;
+	}
+
 	/** @description Matrix inverse O(n^3) */
 	inv() {
 		if (this.rowsLength !== this.columnLength)
